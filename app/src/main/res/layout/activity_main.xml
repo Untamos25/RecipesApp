@@ -7,13 +7,32 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
-    <TextView
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="Hello World!"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="709dp"
+        android:layout_marginEnd="16dp"
+        android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent">
 
+        <Button
+            android:id="@+id/btnCategories"
+            style="@style/StyleNavButton"
+            android:backgroundTint="@color/buttonCategories"
+            android:text="@string/categoties" />
+
+        <Button
+            android:id="@+id/btnFavourites"
+            style="@style/StyleNavButton"
+            android:layout_marginStart="4dp"
+            android:backgroundTint="@color/buttonFavourites"
+            android:text="@string/favourites"
+            app:icon="@drawable/ic_heart_empty"
+            app:iconSize="24dp"
+            app:iconGravity="textEnd" />
+    </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
