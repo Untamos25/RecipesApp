@@ -1,5 +1,5 @@
 <resources>
     <string name="app_name">RecipesApp</string>
-    <string name="categoties">категории</string>
+    <string name="categories">категории</string>
     <string name="favourites">избранное</string>
 </resources>

@@ -4,6 +4,4 @@
     <color name="white">#FFFFFFFF</color>
     <color name="buttonFavourites">#E13E3E</color>
     <color name="buttonCategories">#525DC0</color>
-    <color name="statusBarElements">#4D4D87</color>
-    <color name="navigationBarElements">#8E8E8E</color>
 </resources>
