@@ -7,11 +7,22 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/mainContainer"
+        android:layout_width="@dimen/size_0"
+        android:layout_height="@dimen/size_0"
+        android:layout_marginBottom="@dimen/margin_half"
+        app:layout_constraintBottom_toTopOf="@+id/bottomNavigation"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
     <LinearLayout
+        android:id="@+id/bottomNavigation"
         android:layout_width="@dimen/size_0"
         android:layout_height="wrap_content"
-        android:layout_marginHorizontal="@dimen/nav_container_margin_horizontal"
-        android:layout_marginBottom="@dimen/nav_container_margin_bottom"
+        android:layout_marginHorizontal="@dimen/margin_main"
+        android:layout_marginBottom="@dimen/margin_half"
         android:orientation="horizontal"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -31,12 +42,12 @@
             style="@style/StyleNavButton"
             android:layout_width="@dimen/size_0"
             android:layout_height="wrap_content"
-            android:layout_marginStart="@dimen/space_between_nav_buttons"
+            android:layout_marginStart="@dimen/margin_quarter"
             android:layout_weight="1"
             android:backgroundTint="@color/buttonFavourites"
             android:text="@string/favourites"
             app:icon="@drawable/ic_heart_empty"
             app:iconGravity="textEnd"
-            app:iconSize="@dimen/nav_button_icon_size" />
+            app:iconSize="@dimen/icon_size" />
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
