@@ -2,6 +2,8 @@ package com.example.recipesapp
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.add
+import androidx.fragment.app.commit
 import com.example.recipesapp.databinding.ActivityMainBinding
 
 private var _binding: ActivityMainBinding? = null
@@ -16,9 +18,16 @@ class MainActivity : AppCompatActivity() {
         _binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        val fragmentManager = supportFragmentManager
-        val fragmentTransaction = fragmentManager.beginTransaction()
+        if (savedInstanceState == null) {
+            supportFragmentManager.commit {
+                setReorderingAllowed(true)
+                add<CategoriesListFragment>(R.id.mainContainer)
+            }
+        }
+    }
 
-        fragmentTransaction.add(R.id.mainContainer, CategoriesListFragment()).commit()
+    override fun onDestroy() {
+        super.onDestroy()
+        _binding = null
     }
 }
