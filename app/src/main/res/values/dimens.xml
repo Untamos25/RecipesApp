@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <dimen name="size_0">0dp</dimen>
-    <dimen name="nav_container_margin_horizontal">16dp</dimen>
-    <dimen name="nav_container_margin_bottom">8dp</dimen>
-    <dimen name="space_between_nav_buttons">4dp</dimen>
-    <dimen name="nav_button_icon_size">24dp</dimen>
-    <dimen name="nav_button_text_size">14sp</dimen>
-    <dimen name="nav_button_padding_horizontal">20dp</dimen>
-    <dimen name="nav_button_corner_radius">8dp</dimen>
+    <dimen name="space_main">16dp</dimen>
+    <dimen name="space_half">8dp</dimen>
+    <dimen name="space_quarter">4dp</dimen>
+    <dimen name="padding_horizontal">20dp</dimen>
+    <dimen name="icon_size">24dp</dimen>
+    <dimen name="text_size_button">14sp</dimen>
 </resources>
