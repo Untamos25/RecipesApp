@@ -9,6 +9,6 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:text="Favourites Fragment"
-        android:textSize="@dimen/text_size_button" />
+        android:textSize="@dimen/text_size_medium" />
 
 </FrameLayout>

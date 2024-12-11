@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="@dimen/card_width"
+    android:layout_height="@dimen/card_height"
+    android:clickable="true"
+    app:cardCornerRadius="@dimen/space_half"
+    android:layout_marginHorizontal="@dimen/space_half"
+    android:layout_marginVertical="@dimen/space_half">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/image_size_medium"
+            android:scaleType="centerCrop"
+            android:src="@drawable/bcg_categories" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="@dimen/space_half"
+            android:layout_marginStart="@dimen/space_half"
+            android:text="ЗАГОЛОВОК"
+            android:textAppearance="@style/StyleTitle14Secondary" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/space_half"
+            android:layout_marginBottom="@dimen/space_half"
+            android:text="Описание"
+            android:textAppearance="@style/StyleMainText" />
+
+    </LinearLayout>
+
+</androidx.cardview.widget.CardView>

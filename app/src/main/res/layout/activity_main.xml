@@ -48,6 +48,6 @@
             android:text="@string/favourites"
             app:icon="@drawable/ic_heart_empty"
             app:iconGravity="textEnd"
-            app:iconSize="@dimen/icon_size" />
+            app:iconSize="@dimen/icon_size_large" />
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
