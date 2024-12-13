@@ -1,5 +1,7 @@
 package com.example.recipesapp
 
+import entity.Category
+
 object STUB {
     private val categories: List<Category> = listOf(
         Category(0, "Бургеры", "Рецепты всех популярных видов бургеров", "burger.png"),
