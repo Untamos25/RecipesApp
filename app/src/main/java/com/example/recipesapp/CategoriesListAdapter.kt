@@ -25,10 +25,12 @@ class CategoriesListAdapter(private val dataSet: List<Category>) :
             tvTitle.text = category.title
             tvDescription.text = category.description
             try {
-                val inputStream: InputStream = viewHolder.itemView.context.assets.open(category.imageUrl)
+                val context = viewHolder.itemView.context
+                val inputStream: InputStream = context.assets.open(category.imageUrl)
                 val drawable = Drawable.createFromStream(inputStream, null)
                 imageCategory.setImageDrawable(drawable)
-                imageCategory.contentDescription = "Изображение категории ${category.title}"
+                imageCategory.contentDescription =
+                    context.getString(R.string.category_image) + category.title
             } catch (e: Exception) {
                 e.printStackTrace()
             }
