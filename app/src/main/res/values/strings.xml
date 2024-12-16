@@ -1,5 +1,6 @@
 <resources>
-    <string name="app_name">RecipesApp</string>
+    <string name="app_name" translatable="false">RecipesApp</string>
     <string name="categories">категории</string>
     <string name="favourites">избранное</string>
+    <string name="category_image">Изображение категории </string>
 </resources>

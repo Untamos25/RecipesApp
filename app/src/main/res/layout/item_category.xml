@@ -7,6 +7,7 @@
     android:layout_marginHorizontal="@dimen/space_half"
     android:layout_marginVertical="@dimen/space_half"
     android:clickable="true"
+    android:foreground="?android:attr/selectableItemBackground"
     app:cardCornerRadius="@dimen/space_half">
 
     <LinearLayout
@@ -15,19 +16,22 @@
         android:orientation="vertical">
 
         <ImageView
+            android:id="@+id/image_category"
             android:layout_width="match_parent"
             android:layout_height="@dimen/image_size_medium"
             android:scaleType="centerCrop"
             tools:src="@drawable/bcg_categories" />
 
         <TextView
+            android:id="@+id/tv_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="@dimen/space_half"
             android:textAppearance="@style/StyleTitle14Secondary"
-            tools:text="ЗАГОЛОВОК" />
+            tools:text="заголовок" />
 
         <TextView
+            android:id="@+id/tv_description"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/space_half"
