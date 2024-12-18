@@ -3,5 +3,5 @@
     <string name="app_name">RecipesApp</string>
     <string name="categories">categories</string>
     <string name="favourites">favorites</string>
-    <string name="category_image">"Image of category "</string>
+    <string name="category_image">"Image of category %1$s"</string>
 </resources>
