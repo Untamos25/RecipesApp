@@ -2,5 +2,5 @@
     <string name="app_name" translatable="false">RecipesApp</string>
     <string name="categories">категории</string>
     <string name="favourites">избранное</string>
-    <string name="category_image">Изображение категории </string>
+    <string name="category_image">Изображение категории %1$s</string>
 </resources>
