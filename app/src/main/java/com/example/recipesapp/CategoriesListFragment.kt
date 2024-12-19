@@ -10,11 +10,13 @@ import androidx.fragment.app.commit
 import androidx.fragment.app.replace
 import com.example.recipesapp.databinding.FragmentListCategoriesBinding
 
-const val ARG_CATEGORY_ID = "categoryId"
-const val ARG_CATEGORY_NAME = "categoryName"
-const val ARG_CATEGORY_IMAGE_URL = "categoryImageUrl"
-
 class CategoriesListFragment : Fragment() {
+
+    companion object {
+        const val ARG_CATEGORY_ID = "categoryId"
+        const val ARG_CATEGORY_NAME = "categoryName"
+        const val ARG_CATEGORY_IMAGE_URL = "categoryImageUrl"
+    }
 
     private var _binding: FragmentListCategoriesBinding? = null
     private val binding
@@ -56,7 +58,7 @@ class CategoriesListFragment : Fragment() {
     private fun openRecipesByCategoryId(categoryId: Int) {
         val category = STUB.getCategories().find { it.id == categoryId }
 
-        if (category != null) {
+        category?.let {category ->
             val categoryName: String = category.title
             val categoryImageUrl: String = category.imageUrl
 
