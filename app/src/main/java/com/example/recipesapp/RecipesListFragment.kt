@@ -5,6 +5,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.commit
 import androidx.fragment.app.replace
@@ -13,6 +14,10 @@ import java.io.InputStream
 import java.lang.IllegalStateException
 
 class RecipesListFragment : Fragment() {
+
+    companion object {
+        const val ARG_RECIPE = "recipe"
+    }
 
     private var _binding: FragmentListRecipesBinding? = null
     private val binding
@@ -73,9 +78,15 @@ class RecipesListFragment : Fragment() {
     }
 
     private fun openRecipeByRecipeId(recipeId: Int) {
+        val recipe = STUB.getRecipeById(recipeId)
+
+        val bundle = bundleOf(
+            ARG_RECIPE to recipe
+        )
+
         parentFragmentManager.commit {
             setReorderingAllowed(true)
-            replace<RecipeFragment>(R.id.mainContainer)
+            replace<RecipeFragment>(R.id.mainContainer, args = bundle)
         }
     }
 
