@@ -2,6 +2,7 @@
 <resources>
     <dimen name="size_0">0dp</dimen>
     <dimen name="space_main">16dp</dimen>
+    <dimen name="space_three_quarters">12dp</dimen>
     <dimen name="space_half">8dp</dimen>
     <dimen name="space_quarter">4dp</dimen>
     <dimen name="padding_main">10dp</dimen>

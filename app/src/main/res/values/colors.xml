@@ -6,4 +6,5 @@
     <color name="buttonCategories">#525DC0</color>
     <color name="text_titles">#5F3678</color>
     <color name="main_text">#666666</color>
+    <color name="divider">#F5F5F5</color>
 </resources>

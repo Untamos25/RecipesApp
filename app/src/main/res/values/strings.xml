@@ -3,4 +3,6 @@
     <string name="categories">категории</string>
     <string name="favourites">избранное</string>
     <string name="category_image">Изображение категории %1$s</string>
+    <string name="title_ingredients">Ингредиенты</string>
+    <string name="title_cooking_method">Способ приготовления</string>
 </resources>

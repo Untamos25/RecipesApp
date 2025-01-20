@@ -1,0 +1,37 @@
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginVertical="@dimen/space_half"
+    android:paddingHorizontal="@dimen/space_three_quarters">
+
+    <TextView
+        android:id="@+id/tvIngredientName"
+        style="@style/StyleText14AllCaps"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toStartOf="@+id/tvIngredientQuantity"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Ингредиент" />
+
+    <TextView
+        android:id="@+id/tvIngredientQuantity"
+        style="@style/StyleText14AllCaps"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toStartOf="@+id/tvUnitOfMeasure"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="350" />
+
+    <TextView
+        android:id="@+id/tvUnitOfMeasure"
+        style="@style/StyleText14AllCaps"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Г" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -36,7 +36,7 @@
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="@dimen/space_half"
             android:layout_marginBottom="@dimen/space_half"
-            android:textAppearance="@style/StyleMainText"
+            android:textAppearance="@style/StyleMainText12"
             tools:text="Описание" />
 
     </LinearLayout>
