@@ -45,7 +45,7 @@
 
     <style name="StyleHeader">
         <item name="android:textAppearance">@style/StyleTitle20</item>
-        <item name="android:background">@drawable/shape_rounded_headers</item>
+        <item name="android:background">@drawable/shape_rounded</item>
         <item name="android:padding">@dimen/padding_main</item>
     </style>
 

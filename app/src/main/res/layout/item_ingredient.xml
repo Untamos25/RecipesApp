@@ -21,17 +21,8 @@
         style="@style/StyleText14AllCaps"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintEnd_toStartOf="@+id/tvUnitOfMeasure"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:text="350" />
-
-    <TextView
-        android:id="@+id/tvUnitOfMeasure"
-        style="@style/StyleText14AllCaps"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:text="Г" />
+        tools:text="350" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

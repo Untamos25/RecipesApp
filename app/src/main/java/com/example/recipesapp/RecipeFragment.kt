@@ -57,13 +57,22 @@ class RecipeFragment : Fragment() {
         val ingredientsAdapter = IngredientsAdapter(ingredients)
         val methodAdapter = MethodAdapter(method)
 
-        val divider = MaterialDividerItemDecoration(requireContext(), LinearLayoutManager.VERTICAL)
-        divider.dividerColor = ContextCompat.getColor(requireContext(), R.color.divider)
-        binding.rvIngredients.addItemDecoration(divider)
-        binding.rvMethod.addItemDecoration(divider)
+        val dividerMargin = resources.getDimensionPixelSize(R.dimen.space_three_quarters)
+        val divider =
+            MaterialDividerItemDecoration(requireContext(), LinearLayoutManager.VERTICAL).apply {
+                dividerColor = ContextCompat.getColor(requireContext(), R.color.divider)
+                isLastItemDecorated = false
+                dividerInsetStart = dividerMargin
+                dividerInsetEnd = dividerMargin
+            }
 
-        binding.rvIngredients.adapter = ingredientsAdapter
-        binding.rvMethod.adapter = methodAdapter
+        with(binding) {
+            rvIngredients.addItemDecoration(divider)
+            rvMethod.addItemDecoration(divider)
+
+            rvIngredients.adapter = ingredientsAdapter
+            rvMethod.adapter = methodAdapter
+        }
     }
 
     private fun initUI(recipe: Recipe) {

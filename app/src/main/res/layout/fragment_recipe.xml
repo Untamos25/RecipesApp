@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/white">
+    android:background="@color/background">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -24,8 +24,8 @@
 
             <ImageView
                 android:id="@+id/imgFavorites"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:layout_width="@dimen/image_size_small"
+                android:layout_height="@dimen/image_size_small"
                 android:layout_marginTop="@dimen/space_main"
                 android:layout_marginEnd="@dimen/space_main"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -60,6 +60,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_marginHorizontal="@dimen/space_main"
+            android:background="@drawable/shape_rounded"
+            android:paddingVertical="@dimen/space_quarter"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
         <TextView
@@ -77,6 +79,8 @@
             android:layout_height="match_parent"
             android:layout_marginHorizontal="@dimen/space_main"
             android:layout_marginBottom="@dimen/space_half"
+            android:background="@drawable/shape_rounded"
+            android:paddingVertical="@dimen/space_quarter"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
     </LinearLayout>
