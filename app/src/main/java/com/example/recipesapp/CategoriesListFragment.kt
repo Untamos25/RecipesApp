@@ -58,7 +58,7 @@ class CategoriesListFragment : Fragment() {
     private fun openRecipesByCategoryId(categoryId: Int) {
         val category = STUB.getCategories().find { it.id == categoryId }
 
-        category?.let {category ->
+        category?.let { category ->
             val categoryName: String = category.title
             val categoryImageUrl: String = category.imageUrl
 

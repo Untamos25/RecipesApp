@@ -4,4 +4,6 @@
     <string name="categories">categories</string>
     <string name="favourites">favorites</string>
     <string name="category_image">"Image of category %1$s"</string>
+    <string name="title_ingredients">Ingredients</string>
+    <string name="title_cooking_method">Cooking method</string>
 </resources>

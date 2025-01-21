@@ -1,14 +1,20 @@
 package com.example.recipesapp
 
+import android.graphics.drawable.Drawable
 import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.recipesapp.RecipesListFragment.Companion.ARG_RECIPE
 import com.example.recipesapp.databinding.FragmentRecipeBinding
+import com.google.android.material.divider.MaterialDividerItemDecoration
+import entity.Ingredient
 import entity.Recipe
+import java.io.InputStream
 import java.lang.IllegalStateException
 
 class RecipeFragment : Fragment() {
@@ -36,11 +42,51 @@ class RecipeFragment : Fragment() {
             arguments?.getParcelable(ARG_RECIPE)
         }
 
-        if (recipe != null) binding.tvRecipeFragment.text = "Рецепт получен: ${recipe.title}"
+        recipe?.let { recipe ->
+            initUI(recipe)
+            initRecycler(recipe.ingredients, recipe.method)
+        }
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    private fun initRecycler(ingredients: List<Ingredient>, method: List<String>) {
+        val ingredientsAdapter = IngredientsAdapter(ingredients)
+        val methodAdapter = MethodAdapter(method)
+
+        val dividerMargin = resources.getDimensionPixelSize(R.dimen.space_three_quarters)
+        val divider =
+            MaterialDividerItemDecoration(requireContext(), LinearLayoutManager.VERTICAL).apply {
+                dividerColor = ContextCompat.getColor(requireContext(), R.color.divider)
+                isLastItemDecorated = false
+                dividerInsetStart = dividerMargin
+                dividerInsetEnd = dividerMargin
+            }
+
+        with(binding) {
+            rvIngredients.addItemDecoration(divider)
+            rvMethod.addItemDecoration(divider)
+
+            rvIngredients.adapter = ingredientsAdapter
+            rvMethod.adapter = methodAdapter
+        }
+    }
+
+    private fun initUI(recipe: Recipe) {
+        binding.tvRecipeTitle.text = recipe.title
+
+        recipe.imageUrl.let { imageUrl ->
+            try {
+                val inputStream: InputStream = requireContext().assets.open(imageUrl)
+                val drawable = Drawable.createFromStream(inputStream, null)
+                binding.imgRecipe.setImageDrawable(drawable)
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
+        }
+
     }
 }
