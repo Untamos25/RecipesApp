@@ -4,11 +4,14 @@
     <dimen name="space_main">16dp</dimen>
     <dimen name="space_three_quarters">12dp</dimen>
     <dimen name="space_half">8dp</dimen>
+    <dimen name="space_6">6dp</dimen>
     <dimen name="space_quarter">4dp</dimen>
     <dimen name="padding_main">10dp</dimen>
     <dimen name="padding_horizontal">20dp</dimen>
     <dimen name="icon_size_large">24dp</dimen>
+    <dimen name="text_size_medium_bigger">16sp</dimen>
     <dimen name="text_size_medium">14sp</dimen>
+    <dimen name="text_size_main">12sp</dimen>
     <dimen name="image_size_large">224dp</dimen>
     <dimen name="image_size_medium">130dp</dimen>
     <dimen name="image_size_small">40dp</dimen>
