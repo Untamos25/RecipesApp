@@ -9,4 +9,6 @@
     <color name="main_text">#666666</color>
     <color name="main_text_alternative">#626466</color>
     <color name="divider">#F5F5F5</color>
+    <color name="seekbar_progress">#A1A9F9</color>
+    <color name="seekbar_thumb">#525DC0</color>
 </resources>
