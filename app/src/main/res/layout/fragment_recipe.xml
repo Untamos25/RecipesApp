@@ -51,9 +51,50 @@
             style="@style/StyleTitle20"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/space_main"
+            android:layout_marginHorizontal="@dimen/space_main"
+            android:layout_marginTop="@dimen/space_main"
             android:text="@string/title_ingredients"
             android:textAppearance="@style/StyleTitle20" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:id="@+id/tvPortionsTitle"
+                style="@style/StyleTitle16"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/space_main"
+                android:layout_marginEnd="@dimen/space_6"
+                android:layout_marginVertical="@dimen/space_6"
+                android:textAppearance="@style/StyleTitle16"
+                android:text="@string/title_portions"
+                />
+
+            <TextView
+                android:id="@+id/tvPortionsValue"
+                style="@style/StyleTitle16"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="@dimen/space_6"
+                android:textAppearance="@style/StyleTitle16"
+                tools:text="1"
+                />
+
+        </LinearLayout>
+
+        <SeekBar
+            android:id="@+id/sbPortions"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="@dimen/space_main"
+            android:layout_marginBottom="@dimen/space_main"
+            android:max="5"
+            android:min="1"
+            android:progress="1" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvIngredients"

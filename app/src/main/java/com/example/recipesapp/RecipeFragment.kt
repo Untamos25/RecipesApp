@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.SeekBar
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -16,6 +17,8 @@ import entity.Ingredient
 import entity.Recipe
 import java.io.InputStream
 import java.lang.IllegalStateException
+
+const val MIN_AMOUNT_OF_PORTIONS = 1
 
 class RecipeFragment : Fragment() {
 
@@ -67,8 +70,28 @@ class RecipeFragment : Fragment() {
             }
 
         with(binding) {
+            tvPortionsValue.text = "$MIN_AMOUNT_OF_PORTIONS"
             rvIngredients.addItemDecoration(divider)
             rvMethod.addItemDecoration(divider)
+
+            sbPortions.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+                override fun onProgressChanged(
+                    seekBar: SeekBar?,
+                    progress: Int,
+                    fromUser: Boolean
+                ) {
+                    tvPortionsValue.text = progress.toString()
+                    ingredientsAdapter.updateIngredients(progress)
+                }
+
+                override fun onStartTrackingTouch(seekBar: SeekBar?) {
+
+                }
+
+                override fun onStopTrackingTouch(seekBar: SeekBar?) {
+
+                }
+            })
 
             rvIngredients.adapter = ingredientsAdapter
             rvMethod.adapter = methodAdapter

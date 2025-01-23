@@ -3,7 +3,7 @@
 
     <style name="StyleMainText12" parent="TextAppearance.AppCompat">
         <item name="android:fontFamily">@font/montserrat_medium</item>
-        <item name="android:textSize">12sp</item>
+        <item name="android:textSize">@dimen/text_size_main</item>
         <item name="android:textColor">@color/main_text</item>
     </style>
 
@@ -30,6 +30,13 @@
 
     <style name="StyleTitle14Secondary" parent="StyleTitle14">
         <item name="android:textColor">@color/text_titles</item>
+    </style>
+
+    <style name="StyleTitle16" parent="TextAppearance.AppCompat">
+        <item name="android:fontFamily">@font/montserrat_alternates</item>
+        <item name="android:textSize">@dimen/text_size_medium_bigger</item>
+        <item name="android:textColor">@color/main_text_alternative</item>
+        <item name="android:textAllCaps">false</item>
     </style>
 
     <style name="StyleTitle20" parent="StyleTitle">
