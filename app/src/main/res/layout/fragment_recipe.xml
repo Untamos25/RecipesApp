@@ -22,12 +22,14 @@
                 android:scaleType="centerCrop"
                 tools:src="@drawable/bcg_categories" />
 
-            <ImageView
-                android:id="@+id/imgFavorites"
+            <ImageButton
+                android:id="@+id/ibFavorites"
                 android:layout_width="@dimen/image_size_small"
                 android:layout_height="@dimen/image_size_small"
                 android:layout_marginTop="@dimen/space_main"
                 android:layout_marginEnd="@dimen/space_main"
+                android:background="@drawable/ripple_effect"
+                android:scaleType="fitCenter"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 tools:src="@drawable/ic_heart_empty" />
@@ -59,20 +61,19 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center_vertical">
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
 
             <TextView
                 android:id="@+id/tvPortionsTitle"
                 style="@style/StyleTitle16"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginVertical="@dimen/space_6"
                 android:layout_marginStart="@dimen/space_main"
                 android:layout_marginEnd="@dimen/space_6"
-                android:layout_marginVertical="@dimen/space_6"
-                android:textAppearance="@style/StyleTitle16"
                 android:text="@string/title_portions"
-                />
+                android:textAppearance="@style/StyleTitle16" />
 
             <TextView
                 android:id="@+id/tvPortionsValue"
@@ -81,8 +82,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginVertical="@dimen/space_6"
                 android:textAppearance="@style/StyleTitle16"
-                tools:text="1"
-                />
+                tools:text="1" />
 
         </LinearLayout>
 
@@ -91,10 +91,11 @@
             style="@style/styleSeekBar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginHorizontal="@dimen/space_main"
             android:layout_marginBottom="@dimen/space_main"
             android:max="5"
             android:min="1"
+            android:paddingStart="@dimen/space_main"
+            android:paddingEnd="@dimen/space_main"
             android:progress="1" />
 
 
