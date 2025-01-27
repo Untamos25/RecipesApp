@@ -27,6 +27,8 @@ class RecipeFragment : Fragment() {
         get() = _binding
             ?: throw IllegalStateException("Binding для FragmentRecipeBinding не должен быть null")
 
+    private var isFavorite = false
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -99,7 +101,16 @@ class RecipeFragment : Fragment() {
     }
 
     private fun initUI(recipe: Recipe) {
-        binding.tvRecipeTitle.text = recipe.title
+        with (binding) {
+            tvRecipeTitle.text = recipe.title
+            ibFavorites.setImageResource(R.drawable.ic_heart_empty)
+
+            ibFavorites.setOnClickListener {
+                if (!isFavorite) ibFavorites.setImageResource(R.drawable.ic_heart)
+                else ibFavorites.setImageResource(R.drawable.ic_heart_empty)
+                isFavorite = !isFavorite
+            }
+        }
 
         recipe.imageUrl.let { imageUrl ->
             try {
