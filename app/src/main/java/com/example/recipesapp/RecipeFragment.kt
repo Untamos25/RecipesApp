@@ -1,5 +1,6 @@
 package com.example.recipesapp
 
+import android.content.Context
 import android.graphics.drawable.Drawable
 import android.os.Build
 import android.os.Bundle
@@ -19,6 +20,8 @@ import java.io.InputStream
 import java.lang.IllegalStateException
 
 const val MIN_AMOUNT_OF_PORTIONS = 1
+const val FAVORITES_PREFS = "favorites_prefs"
+const val FAVORITES_KEY = "favorites"
 
 class RecipeFragment : Fragment() {
 
@@ -51,6 +54,7 @@ class RecipeFragment : Fragment() {
             initUI(recipe)
             initRecycler(recipe.ingredients, recipe.method)
         }
+
     }
 
     override fun onDestroyView() {
@@ -101,14 +105,20 @@ class RecipeFragment : Fragment() {
     }
 
     private fun initUI(recipe: Recipe) {
-        with (binding) {
+        val favorites = getFavorites()
+        isFavorite = favorites.contains(recipe.id.toString())
+        updateFavoriteIcon(isFavorite)
+
+        with(binding) {
             tvRecipeTitle.text = recipe.title
-            ibFavorites.setImageResource(R.drawable.ic_heart_empty)
 
             ibFavorites.setOnClickListener {
-                if (!isFavorite) ibFavorites.setImageResource(R.drawable.ic_heart)
-                else ibFavorites.setImageResource(R.drawable.ic_heart_empty)
+                if (isFavorite) favorites.remove(recipe.id.toString())
+                else favorites.add(recipe.id.toString())
+
                 isFavorite = !isFavorite
+                updateFavoriteIcon(isFavorite)
+                saveFavorites(favorites)
             }
         }
 
@@ -121,6 +131,31 @@ class RecipeFragment : Fragment() {
                 e.printStackTrace()
             }
         }
-
     }
+
+    private fun updateFavoriteIcon(isFavorite: Boolean) {
+        binding.ibFavorites.apply {
+            setImageResource(if (isFavorite) R.drawable.ic_heart else R.drawable.ic_heart_empty)
+        }
+    }
+
+    private fun saveFavorites(favorites: Set<String>) {
+        val sharedPrefs =
+            activity?.getSharedPreferences(FAVORITES_PREFS, Context.MODE_PRIVATE) ?: return
+
+        with(sharedPrefs.edit()) {
+            putStringSet(FAVORITES_KEY, favorites)
+            apply()
+        }
+    }
+
+    private fun getFavorites(): MutableSet<String> {
+        val sharedPrefs =
+            activity?.getSharedPreferences(FAVORITES_PREFS, Context.MODE_PRIVATE)
+                ?: return mutableSetOf()
+
+        val storedSet = sharedPrefs.getStringSet(FAVORITES_KEY, emptySet()) ?: emptySet()
+        return HashSet(storedSet)
+    }
+
 }
