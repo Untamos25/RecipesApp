@@ -245,4 +245,9 @@ object STUB {
     fun getRecipeById(id: Int): Recipe? {
         return burgerRecipes.find { it.id == id }
     }
+
+    fun getRecipesByIds(setIds: MutableSet<String>): List<Recipe> {
+        return burgerRecipes.filter {setIds.contains(it.id.toString())}
+    }
+
 }
