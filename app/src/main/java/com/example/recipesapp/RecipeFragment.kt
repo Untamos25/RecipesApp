@@ -20,10 +20,13 @@ import java.io.InputStream
 import java.lang.IllegalStateException
 
 const val MIN_AMOUNT_OF_PORTIONS = 1
-const val FAVORITES_PREFS = "favorites_prefs"
-const val FAVORITES_KEY = "favorites"
 
 class RecipeFragment : Fragment() {
+
+    companion object {
+        const val FAVORITES_PREFS = "favorites_prefs"
+        const val FAVORITES_KEY = "favorites"
+    }
 
     private var _binding: FragmentRecipeBinding? = null
     private val binding
@@ -31,6 +34,9 @@ class RecipeFragment : Fragment() {
             ?: throw IllegalStateException("Binding для FragmentRecipeBinding не должен быть null")
 
     private var isFavorite = false
+    private val sharedPrefs by lazy {
+        requireActivity().getSharedPreferences(FAVORITES_PREFS, Context.MODE_PRIVATE)
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -140,9 +146,6 @@ class RecipeFragment : Fragment() {
     }
 
     private fun saveFavorites(favorites: Set<String>) {
-        val sharedPrefs =
-            activity?.getSharedPreferences(FAVORITES_PREFS, Context.MODE_PRIVATE) ?: return
-
         with(sharedPrefs.edit()) {
             putStringSet(FAVORITES_KEY, favorites)
             apply()
@@ -150,10 +153,6 @@ class RecipeFragment : Fragment() {
     }
 
     private fun getFavorites(): MutableSet<String> {
-        val sharedPrefs =
-            activity?.getSharedPreferences(FAVORITES_PREFS, Context.MODE_PRIVATE)
-                ?: return mutableSetOf()
-
         val storedSet = sharedPrefs.getStringSet(FAVORITES_KEY, emptySet()) ?: emptySet()
         return HashSet(storedSet)
     }

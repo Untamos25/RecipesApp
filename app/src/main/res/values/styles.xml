@@ -7,6 +7,10 @@
         <item name="android:textColor">@color/main_text</item>
     </style>
 
+    <style name="StyleMainText16" parent="StyleMainText12">
+        <item name="android:textSize">@dimen/text_size_medium_bigger</item>
+    </style>
+
     <style name="StyleMainText14" parent="StyleMainText12">
         <item name="android:textSize">@dimen/text_size_medium</item>
     </style>
