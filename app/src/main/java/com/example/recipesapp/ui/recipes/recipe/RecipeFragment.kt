@@ -1,4 +1,4 @@
-package com.example.recipesapp
+package com.example.recipesapp.ui.recipes.recipe
 
 import android.content.Context
 import android.graphics.drawable.Drawable
@@ -11,11 +11,12 @@ import android.widget.SeekBar
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.recipesapp.RecipesListFragment.Companion.ARG_RECIPE
+import com.example.recipesapp.R
+import com.example.recipesapp.ui.recipes.recipeslist.RecipesListFragment.Companion.ARG_RECIPE
 import com.example.recipesapp.databinding.FragmentRecipeBinding
 import com.google.android.material.divider.MaterialDividerItemDecoration
-import entity.Ingredient
-import entity.Recipe
+import com.example.recipesapp.model.Ingredient
+import com.example.recipesapp.model.Recipe
 import java.io.InputStream
 import java.lang.IllegalStateException
 

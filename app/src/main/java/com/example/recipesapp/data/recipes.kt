@@ -1,8 +1,8 @@
-package com.example.recipesapp
+package com.example.recipesapp.data
 
-import entity.Category
-import entity.Ingredient
-import entity.Recipe
+import com.example.recipesapp.model.Category
+import com.example.recipesapp.model.Ingredient
+import com.example.recipesapp.model.Recipe
 
 object STUB {
     private val categories: List<Category> = listOf(
