@@ -1,11 +1,12 @@
-package com.example.recipesapp
+package com.example.recipesapp.ui.recipes.recipeslist
 
 import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.example.recipesapp.R
 import com.example.recipesapp.databinding.ItemRecipeBinding
-import entity.Recipe
+import com.example.recipesapp.model.Recipe
 import java.io.InputStream
 
 class RecipesListAdapter(private val dataSet: List<Recipe>) :

@@ -1,4 +1,4 @@
-package entity
+package com.example.recipesapp.model
 
 data class Category(
     val id: Int,
