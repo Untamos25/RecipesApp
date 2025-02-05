@@ -20,7 +20,7 @@ import java.lang.IllegalStateException
 class RecipesListFragment : Fragment() {
 
     companion object {
-        const val ARG_RECIPE = "recipe"
+        const val ARG_RECIPE_ID = "recipe_id"
     }
 
     private var _binding: FragmentListRecipesBinding? = null
@@ -82,10 +82,8 @@ class RecipesListFragment : Fragment() {
     }
 
     private fun openRecipeByRecipeId(recipeId: Int) {
-        val recipe = STUB.getRecipeById(recipeId)
-
         val bundle = bundleOf(
-            ARG_RECIPE to recipe
+            ARG_RECIPE_ID to recipeId
         )
 
         parentFragmentManager.commit {
