@@ -11,17 +11,13 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.recipesapp.R
+import com.example.recipesapp.UiConstants.ARG_RECIPE_ID
 import com.example.recipesapp.databinding.FragmentRecipeBinding
 import com.google.android.material.divider.MaterialDividerItemDecoration
-import com.example.recipesapp.model.Ingredient
-import com.example.recipesapp.ui.recipes.recipeslist.RecipesListFragment
 import java.io.InputStream
 import java.lang.IllegalStateException
 
-const val MIN_AMOUNT_OF_PORTIONS = 1
-
 class RecipeFragment : Fragment() {
-
 
     private var _binding: FragmentRecipeBinding? = null
     private val binding
@@ -30,10 +26,15 @@ class RecipeFragment : Fragment() {
 
     private val viewModel: RecipeViewModel by viewModels()
 
+    private lateinit var ingredientsAdapter: IngredientsAdapter
+    private lateinit var methodAdapter: MethodAdapter
+    private lateinit var divider: MaterialDividerItemDecoration
+
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
-        savedINstanceState: Bundle?
+        savedInstanceState: Bundle?
     ): View {
         _binding = FragmentRecipeBinding.inflate(inflater, container, false)
         return binding.root
@@ -42,7 +43,14 @@ class RecipeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val recipeId = arguments?.getInt(RecipesListFragment.ARG_RECIPE_ID)
+        val recipeId = arguments?.getInt(ARG_RECIPE_ID)
+
+        ingredientsAdapter = IngredientsAdapter(mutableListOf())
+        methodAdapter = MethodAdapter(mutableListOf())
+        divider = createDivider()
+        setupSeekBar()
+
+        initRecycler()
 
         recipeId?.let {
             viewModel.loadRecipe(recipeId)
@@ -51,7 +59,8 @@ class RecipeFragment : Fragment() {
         viewModel.recipeState.observe(viewLifecycleOwner) { state ->
             initUI(state)
             state.recipe?.let { recipe ->
-                initRecycler(recipe.ingredients, recipe.method)
+                ingredientsAdapter.submitList(recipe.ingredients)
+                methodAdapter.submitList(recipe.method)
             }
         }
     }
@@ -61,46 +70,15 @@ class RecipeFragment : Fragment() {
         _binding = null
     }
 
-
-    private fun initRecycler(ingredients: List<Ingredient>, method: List<String>) {
-        val ingredientsAdapter = IngredientsAdapter(ingredients)
-        val methodAdapter = MethodAdapter(method)
-
-        val dividerMargin = resources.getDimensionPixelSize(R.dimen.space_three_quarters)
-        val divider =
-            MaterialDividerItemDecoration(requireContext(), LinearLayoutManager.VERTICAL).apply {
-                dividerColor = ContextCompat.getColor(requireContext(), R.color.divider)
-                isLastItemDecorated = false
-                dividerInsetStart = dividerMargin
-                dividerInsetEnd = dividerMargin
-            }
-
+    private fun initRecycler() {
         with(binding) {
-            tvPortionsValue.text = "$MIN_AMOUNT_OF_PORTIONS"
-            rvIngredients.addItemDecoration(divider)
-            rvMethod.addItemDecoration(divider)
-
-            sbPortions.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-                override fun onProgressChanged(
-                    seekBar: SeekBar?,
-                    progress: Int,
-                    fromUser: Boolean
-                ) {
-                    tvPortionsValue.text = progress.toString()
-                    ingredientsAdapter.updateIngredients(progress)
-                }
-
-                override fun onStartTrackingTouch(seekBar: SeekBar?) {
-
-                }
-
-                override fun onStopTrackingTouch(seekBar: SeekBar?) {
-
-                }
-            })
-
+            rvIngredients.layoutManager = LinearLayoutManager(requireContext())
             rvIngredients.adapter = ingredientsAdapter
+            rvIngredients.addItemDecoration(divider)
+
+            rvMethod.layoutManager = LinearLayoutManager(requireContext())
             rvMethod.adapter = methodAdapter
+            rvMethod.addItemDecoration(divider)
         }
     }
 
@@ -118,6 +96,10 @@ class RecipeFragment : Fragment() {
                     viewModel.onFavoritesClicked()
                 }
 
+                sbPortions.progress = state.numberOfPortions
+                tvPortionsValue.text = state.numberOfPortions.toString()
+
+
                 it.imageUrl.let { imageUrl ->
                     try {
                         val inputStream: InputStream = requireContext().assets.open(imageUrl)
@@ -134,6 +116,37 @@ class RecipeFragment : Fragment() {
     private fun updateFavoriteIcon(isFavorite: Boolean) {
         binding.ibFavorites.apply {
             setImageResource(if (isFavorite) R.drawable.ic_heart else R.drawable.ic_heart_empty)
+        }
+    }
+
+    private fun createDivider(): MaterialDividerItemDecoration {
+        val dividerMargin = resources.getDimensionPixelSize(R.dimen.space_three_quarters)
+        val divider =
+            MaterialDividerItemDecoration(requireContext(), LinearLayoutManager.VERTICAL).apply {
+                dividerColor = ContextCompat.getColor(requireContext(), R.color.divider)
+                isLastItemDecorated = false
+                dividerInsetStart = dividerMargin
+                dividerInsetEnd = dividerMargin
+            }
+        return divider
+    }
+
+    private fun setupSeekBar () {
+        with(binding) {
+            sbPortions.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+                override fun onProgressChanged(
+                    seekBar: SeekBar?,
+                    progress: Int,
+                    fromUser: Boolean
+                ) {
+                    tvPortionsValue.text = progress.toString()
+                    ingredientsAdapter.updateQuantity(progress)
+                    viewModel.updateNumberOfPortions(progress)
+                }
+
+                override fun onStartTrackingTouch(seekBar: SeekBar?) {}
+                override fun onStopTrackingTouch(seekBar: SeekBar?) {}
+            })
         }
     }
 }

@@ -6,15 +6,13 @@ import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import com.example.recipesapp.DataConstants.FAVORITES_KEY
+import com.example.recipesapp.DataConstants.FAVORITES_PREFS
+import com.example.recipesapp.ModelConstants.MIN_AMOUNT_OF_PORTIONS
 import com.example.recipesapp.data.STUB
 import com.example.recipesapp.model.Recipe
 
 class RecipeViewModel(application: Application) : AndroidViewModel(application) {
-
-    companion object {
-        const val FAVORITES_PREFS = "favorites_prefs"
-        const val FAVORITES_KEY = "favorites"
-    }
 
     data class RecipeState(
         val recipe: Recipe? = null,
@@ -34,21 +32,18 @@ class RecipeViewModel(application: Application) : AndroidViewModel(application) 
 //        TODO Релаизовать загрузку из сети
 
         val recipe = STUB.getRecipeById(recipeId)
-        val favorites = getFavorites()
-        val isFavorite = favorites.contains(recipeId.toString())
-        val currentPortions = _recipeState.value?.numberOfPortions ?: MIN_AMOUNT_OF_PORTIONS
+        val isFavorite = getFavorites().contains(recipeId.toString())
 
-        _recipeState.value = RecipeState(
+        _recipeState.value = recipeState.value?.copy(
             recipe = recipe,
-            numberOfPortions = currentPortions,
             isFavorite = isFavorite
-        )
+        ) ?: RecipeState(recipe = recipe, isFavorite = isFavorite)
 
         Log.i("!!!", "Рецепт с id $recipeId загружен")
     }
 
     fun onFavoritesClicked() {
-        val currentRecipeId = _recipeState.value?.recipe?.id?.toString() ?: return
+        val currentRecipeId = recipeState.value?.recipe?.id?.toString() ?: return
         val favorites = getFavorites()
         val isFavorite = favorites.contains(currentRecipeId)
 
@@ -58,8 +53,12 @@ class RecipeViewModel(application: Application) : AndroidViewModel(application) 
             favorites.add(currentRecipeId)
         }
 
-        _recipeState.value = _recipeState.value?.copy(isFavorite = !isFavorite)
+        _recipeState.value = recipeState.value?.copy(isFavorite = !isFavorite)
         saveFavorites(favorites)
+    }
+
+    fun updateNumberOfPortions(portions: Int){
+        _recipeState.value = recipeState.value?.copy(numberOfPortions = portions)
     }
 
     private fun getFavorites(): MutableSet<String> {
