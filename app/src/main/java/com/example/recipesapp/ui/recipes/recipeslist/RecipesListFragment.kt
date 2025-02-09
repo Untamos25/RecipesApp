@@ -10,18 +10,17 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.commit
 import androidx.fragment.app.replace
 import com.example.recipesapp.R
+import com.example.recipesapp.UiConstants.ARG_CATEGORY_ID
+import com.example.recipesapp.UiConstants.ARG_CATEGORY_IMAGE_URL
+import com.example.recipesapp.UiConstants.ARG_CATEGORY_NAME
+import com.example.recipesapp.UiConstants.ARG_RECIPE_ID
 import com.example.recipesapp.data.STUB
 import com.example.recipesapp.databinding.FragmentListRecipesBinding
-import com.example.recipesapp.ui.categories.CategoriesListFragment
 import com.example.recipesapp.ui.recipes.recipe.RecipeFragment
 import java.io.InputStream
 import java.lang.IllegalStateException
 
 class RecipesListFragment : Fragment() {
-
-    companion object {
-        const val ARG_RECIPE = "recipe"
-    }
 
     private var _binding: FragmentListRecipesBinding? = null
     private val binding
@@ -44,9 +43,9 @@ class RecipesListFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        categoryId = arguments?.getInt(CategoriesListFragment.ARG_CATEGORY_ID)
-        categoryName = arguments?.getString(CategoriesListFragment.ARG_CATEGORY_NAME)
-        categoryImageUrl = arguments?.getString(CategoriesListFragment.ARG_CATEGORY_IMAGE_URL)
+        categoryId = arguments?.getInt(ARG_CATEGORY_ID)
+        categoryName = arguments?.getString(ARG_CATEGORY_NAME)
+        categoryImageUrl = arguments?.getString(ARG_CATEGORY_IMAGE_URL)
 
         binding.tvCategory.text = categoryName
         categoryImageUrl?.let { imageUrl ->
@@ -82,10 +81,8 @@ class RecipesListFragment : Fragment() {
     }
 
     private fun openRecipeByRecipeId(recipeId: Int) {
-        val recipe = STUB.getRecipeById(recipeId)
-
         val bundle = bundleOf(
-            ARG_RECIPE to recipe
+            ARG_RECIPE_ID to recipeId
         )
 
         parentFragmentManager.commit {

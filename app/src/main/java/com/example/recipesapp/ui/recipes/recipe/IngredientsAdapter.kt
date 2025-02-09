@@ -3,13 +3,13 @@ package com.example.recipesapp.ui.recipes.recipe
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.example.recipesapp.ModelConstants.MIN_AMOUNT_OF_PORTIONS
 import com.example.recipesapp.databinding.ItemIngredientBinding
 import com.example.recipesapp.model.Ingredient
 import java.math.BigDecimal
 import java.math.RoundingMode
 
-
-class IngredientsAdapter(private val dataSet: List<Ingredient>) :
+class IngredientsAdapter(private var dataSet: MutableList<Ingredient>) :
     RecyclerView.Adapter<IngredientsAdapter.ViewHolder>() {
 
     private var quantity = MIN_AMOUNT_OF_PORTIONS
@@ -38,8 +38,14 @@ class IngredientsAdapter(private val dataSet: List<Ingredient>) :
 
     override fun getItemCount() = dataSet.size
 
-    fun updateIngredients(progress: Int) {
+    fun updateQuantity(progress: Int) {
         quantity = progress
+        notifyDataSetChanged()
+    }
+
+    fun submitList(newList: List<Ingredient>) {
+        dataSet.clear()
+        dataSet.addAll(newList)
         notifyDataSetChanged()
     }
 }

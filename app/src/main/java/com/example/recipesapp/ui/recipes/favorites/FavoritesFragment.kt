@@ -9,11 +9,11 @@ import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.commit
 import androidx.fragment.app.replace
+import com.example.recipesapp.DataConstants.FAVORITES_KEY
+import com.example.recipesapp.DataConstants.FAVORITES_PREFS
 import com.example.recipesapp.R
+import com.example.recipesapp.UiConstants.ARG_RECIPE_ID
 import com.example.recipesapp.data.STUB
-import com.example.recipesapp.ui.recipes.recipe.RecipeFragment.Companion.FAVORITES_KEY
-import com.example.recipesapp.ui.recipes.recipe.RecipeFragment.Companion.FAVORITES_PREFS
-import com.example.recipesapp.ui.recipes.recipeslist.RecipesListFragment.Companion.ARG_RECIPE
 import com.example.recipesapp.databinding.FragmentFavoritesBinding
 import com.example.recipesapp.ui.recipes.recipe.RecipeFragment
 import com.example.recipesapp.ui.recipes.recipeslist.RecipesListAdapter
@@ -68,10 +68,8 @@ class FavoritesFragment : Fragment() {
     }
 
     private fun openRecipeByRecipeId(recipeId: Int) {
-        val recipe = STUB.getRecipeById(recipeId)
-
         val bundle = bundleOf(
-            ARG_RECIPE to recipe
+            ARG_RECIPE_ID to recipeId
         )
 
         parentFragmentManager.commit {

@@ -9,17 +9,14 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.commit
 import androidx.fragment.app.replace
 import com.example.recipesapp.R
+import com.example.recipesapp.UiConstants.ARG_CATEGORY_ID
+import com.example.recipesapp.UiConstants.ARG_CATEGORY_IMAGE_URL
+import com.example.recipesapp.UiConstants.ARG_CATEGORY_NAME
 import com.example.recipesapp.data.STUB
 import com.example.recipesapp.databinding.FragmentListCategoriesBinding
 import com.example.recipesapp.ui.recipes.recipeslist.RecipesListFragment
 
 class CategoriesListFragment : Fragment() {
-
-    companion object {
-        const val ARG_CATEGORY_ID = "categoryId"
-        const val ARG_CATEGORY_NAME = "categoryName"
-        const val ARG_CATEGORY_IMAGE_URL = "categoryImageUrl"
-    }
 
     private var _binding: FragmentListCategoriesBinding? = null
     private val binding
