@@ -1,6 +1,5 @@
 package com.example.recipesapp.ui.recipes.recipe
 
-import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -14,7 +13,6 @@ import com.example.recipesapp.R
 import com.example.recipesapp.UiConstants.ARG_RECIPE_ID
 import com.example.recipesapp.databinding.FragmentRecipeBinding
 import com.google.android.material.divider.MaterialDividerItemDecoration
-import java.io.InputStream
 import java.lang.IllegalStateException
 
 class RecipeFragment : Fragment() {
@@ -99,16 +97,7 @@ class RecipeFragment : Fragment() {
                 sbPortions.progress = state.numberOfPortions
                 tvPortionsValue.text = state.numberOfPortions.toString()
 
-
-                it.imageUrl.let { imageUrl ->
-                    try {
-                        val inputStream: InputStream = requireContext().assets.open(imageUrl)
-                        val drawable = Drawable.createFromStream(inputStream, null)
-                        binding.imgRecipe.setImageDrawable(drawable)
-                    } catch (e: Exception) {
-                        e.printStackTrace()
-                    }
-                }
+                imgRecipe.setImageDrawable(state.recipeImage)
             }
         }
     }
@@ -131,7 +120,7 @@ class RecipeFragment : Fragment() {
         return divider
     }
 
-    private fun setupSeekBar () {
+    private fun setupSeekBar() {
         with(binding) {
             sbPortions.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
                 override fun onProgressChanged(
