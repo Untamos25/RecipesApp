@@ -46,8 +46,8 @@ class RecipeFragment : Fragment() {
         ingredientsAdapter = IngredientsAdapter(mutableListOf())
         methodAdapter = MethodAdapter(mutableListOf())
         divider = createDivider()
-        setupSeekBar()
 
+        setupSeekBar()
         initRecycler()
 
         recipeId?.let {
@@ -56,10 +56,6 @@ class RecipeFragment : Fragment() {
 
         viewModel.recipeState.observe(viewLifecycleOwner) { state ->
             initUI(state)
-            state.recipe?.let { recipe ->
-                ingredientsAdapter.submitList(recipe.ingredients)
-                methodAdapter.submitList(recipe.method)
-            }
         }
     }
 
@@ -83,6 +79,7 @@ class RecipeFragment : Fragment() {
     private fun initUI(state: RecipeViewModel.RecipeState) {
         val recipe = state.recipe
         val isFavorite = state.isFavorite
+        val portionsCount = state.numberOfPortions
 
         updateFavoriteIcon(isFavorite)
 
@@ -96,6 +93,9 @@ class RecipeFragment : Fragment() {
 
                 sbPortions.progress = state.numberOfPortions
                 tvPortionsValue.text = state.numberOfPortions.toString()
+                ingredientsAdapter.updateQuantity(portionsCount)
+                ingredientsAdapter.submitList(recipe.ingredients)
+                methodAdapter.submitList(recipe.method)
 
                 imgRecipe.setImageDrawable(state.recipeImage)
             }
@@ -129,7 +129,6 @@ class RecipeFragment : Fragment() {
                     fromUser: Boolean
                 ) {
                     tvPortionsValue.text = progress.toString()
-                    ingredientsAdapter.updateQuantity(progress)
                     viewModel.updateNumberOfPortions(progress)
                 }
 

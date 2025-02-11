@@ -40,7 +40,6 @@ class IngredientsAdapter(private var dataSet: MutableList<Ingredient>) :
 
     fun updateQuantity(progress: Int) {
         quantity = progress
-        notifyDataSetChanged()
     }
 
     fun submitList(newList: List<Ingredient>) {
