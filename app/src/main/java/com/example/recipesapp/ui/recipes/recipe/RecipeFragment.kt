@@ -94,8 +94,8 @@ class RecipeFragment : Fragment() {
                 sbPortions.progress = state.numberOfPortions
                 tvPortionsValue.text = state.numberOfPortions.toString()
                 ingredientsAdapter.updateQuantity(portionsCount)
-                ingredientsAdapter.submitList(recipe.ingredients)
-                methodAdapter.submitList(recipe.method)
+                ingredientsAdapter.dataSet = recipe.ingredients.toMutableList()
+                methodAdapter.dataSet = recipe.method.toMutableList()
 
                 imgRecipe.setImageDrawable(state.recipeImage)
             }
@@ -121,20 +121,25 @@ class RecipeFragment : Fragment() {
     }
 
     private fun setupSeekBar() {
-        with(binding) {
-            sbPortions.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
-                override fun onProgressChanged(
-                    seekBar: SeekBar?,
-                    progress: Int,
-                    fromUser: Boolean
-                ) {
-                    tvPortionsValue.text = progress.toString()
-                    viewModel.updateNumberOfPortions(progress)
-                }
-
-                override fun onStartTrackingTouch(seekBar: SeekBar?) {}
-                override fun onStopTrackingTouch(seekBar: SeekBar?) {}
-            })
-        }
+        binding.sbPortions.setOnSeekBarChangeListener(
+            PortionSeekBarListener {  progress ->
+                binding.tvPortionsValue.text = progress.toString()
+                viewModel.updateNumberOfPortions(progress) }
+        )
     }
+
+    class PortionSeekBarListener(val onChangeIngredients: (Int) -> Unit) :
+        SeekBar.OnSeekBarChangeListener {
+        override fun onProgressChanged(
+            seekBar: SeekBar?,
+            progress: Int,
+            fromUser: Boolean
+        ) {
+            onChangeIngredients(progress)
+        }
+
+        override fun onStartTrackingTouch(seekBar: SeekBar?) {}
+        override fun onStopTrackingTouch(seekBar: SeekBar?) {}
+    }
+
 }

@@ -9,7 +9,7 @@ import com.example.recipesapp.model.Ingredient
 import java.math.BigDecimal
 import java.math.RoundingMode
 
-class IngredientsAdapter(private var dataSet: MutableList<Ingredient>) :
+class IngredientsAdapter(var dataSet: MutableList<Ingredient>) :
     RecyclerView.Adapter<IngredientsAdapter.ViewHolder>() {
 
     private var quantity = MIN_AMOUNT_OF_PORTIONS
@@ -40,11 +40,6 @@ class IngredientsAdapter(private var dataSet: MutableList<Ingredient>) :
 
     fun updateQuantity(progress: Int) {
         quantity = progress
-    }
-
-    fun submitList(newList: List<Ingredient>) {
-        dataSet.clear()
-        dataSet.addAll(newList)
         notifyDataSetChanged()
     }
 }
