@@ -26,4 +26,9 @@ class MethodAdapter(var dataSet: MutableList<String>) :
 
     override fun getItemCount() = dataSet.size
 
+    fun submitList(newList: List<String>) {
+        dataSet.clear()
+        dataSet.addAll(newList)
+        notifyDataSetChanged()
+    }
 }

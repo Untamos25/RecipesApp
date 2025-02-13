@@ -94,8 +94,8 @@ class RecipeFragment : Fragment() {
                 sbPortions.progress = state.numberOfPortions
                 tvPortionsValue.text = state.numberOfPortions.toString()
                 ingredientsAdapter.updateQuantity(portionsCount)
-                ingredientsAdapter.dataSet = recipe.ingredients.toMutableList()
-                methodAdapter.dataSet = recipe.method.toMutableList()
+                ingredientsAdapter.submitList(recipe.ingredients)
+                methodAdapter.submitList(recipe.method)
 
                 imgRecipe.setImageDrawable(state.recipeImage)
             }
