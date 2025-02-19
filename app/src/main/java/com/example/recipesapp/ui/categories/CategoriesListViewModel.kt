@@ -12,21 +12,13 @@ class CategoriesListViewModel : ViewModel() {
 
     data class CategoriesListState(
         val categoriesList: List<Category>? = null,
-    )
-
-    data class NavigationToRecipesList(
-        val categoryId: Int,
-        val categoryName: String,
-        val categoryImageUrl: String,
+        val selectedCategory: Category? = null
     )
 
     private val _categoriesListState = MutableLiveData<CategoriesListState>()
     val categoriesListState: LiveData<CategoriesListState>
         get() = _categoriesListState
 
-    private val _navigateToRecipesList = MutableLiveData<NavigationToRecipesList>()
-    val navigateToRecipesList: LiveData<NavigationToRecipesList>
-        get() = _navigateToRecipesList
 
     init {
         Log.i("!!!", "CategoriesViewModel инициализирована")
@@ -42,13 +34,14 @@ class CategoriesListViewModel : ViewModel() {
     }
 
     fun onCategoryClicked(categoryId: Int) {
-        val category = getCategoryByCategoryId(categoryId)
+        val selectedCategory = getCategoryByCategoryId(categoryId)
 
-        category?.let { category ->
-            _navigateToRecipesList.value =
-                NavigationToRecipesList(category.id, category.title, category.imageUrl)
+        selectedCategory?.let { selectedCategory ->
+            _categoriesListState.value = categoriesListState.value?.copy(
+                selectedCategory = selectedCategory
+            )
         }
-        Log.i("!!!", "Произведён переход в категорию ${category?.title}")
+        Log.i("!!!", "Произведён переход в категорию ${selectedCategory?.title}")
     }
 
 }

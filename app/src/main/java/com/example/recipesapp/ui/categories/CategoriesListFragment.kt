@@ -24,8 +24,8 @@ class CategoriesListFragment : Fragment() {
             ?: throw IllegalStateException("Binding для FragmentListCategoriesBinding не должен быть null")
 
     private val viewModel: CategoriesListViewModel by viewModels()
+    private val categoriesListAdapter = CategoriesListAdapter(listOf())
 
-    private lateinit var categoriesListAdapter: CategoriesListAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -39,23 +39,20 @@ class CategoriesListFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        categoriesListAdapter = CategoriesListAdapter(listOf())
-
         initRecycler()
 
         viewModel.loadCategories()
         viewModel.categoriesListState.observe(viewLifecycleOwner) { state ->
             initUI(state)
-        }
 
-        viewModel.navigateToRecipesList.observe(viewLifecycleOwner) { navData ->
-            openRecipesList(
-                navData.categoryId,
-                navData.categoryName,
-                navData.categoryImageUrl
-            )
+            state.selectedCategory?.let {
+                openRecipesList(
+                    state.selectedCategory.id,
+                    state.selectedCategory.title,
+                    state.selectedCategory.imageUrl
+                )
+            }
         }
-
     }
 
     override fun onDestroyView() {

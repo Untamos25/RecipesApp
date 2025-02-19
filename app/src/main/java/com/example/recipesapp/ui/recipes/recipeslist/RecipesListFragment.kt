@@ -25,8 +25,7 @@ class RecipesListFragment : Fragment() {
             ?: throw IllegalStateException("Binding для FragmentListRecipesBinding не должен быть null")
 
     private val viewModel: RecipesListViewModel by viewModels()
-
-    private lateinit var recipesListAdapter: RecipesListAdapter
+    private val recipesListAdapter = RecipesListAdapter(listOf())
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -42,7 +41,6 @@ class RecipesListFragment : Fragment() {
 
         val categoryId = arguments?.getInt(ARG_CATEGORY_ID)
 
-        recipesListAdapter = RecipesListAdapter(listOf())
         initRecycler()
 
         categoryId?.let {

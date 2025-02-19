@@ -23,8 +23,7 @@ class FavoritesFragment : Fragment() {
             ?: throw IllegalStateException("Binding для FragmentFavoritesBinding не должен быть null")
 
     private val viewModel: FavoritesViewModel by viewModels()
-
-    private lateinit var favoritesAdapter: RecipesListAdapter
+    private val favoritesAdapter = RecipesListAdapter(listOf())
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -53,7 +52,6 @@ class FavoritesFragment : Fragment() {
 
 
     private fun initRecycler() {
-        favoritesAdapter = RecipesListAdapter(listOf())
         binding.rvFavorites.adapter = favoritesAdapter
 
         favoritesAdapter.setOnItemClickListener(object :
@@ -68,7 +66,7 @@ class FavoritesFragment : Fragment() {
     private fun initUI(state: FavoritesViewModel.FavoritesState) {
         val favoritesList = state.favoritesList
 
-        favoritesList?.let{
+        favoritesList?.let {
             if (favoritesList.isNotEmpty()) {
                 binding.tvEmptyFavorites.visibility = View.GONE
                 binding.rvFavorites.visibility = View.VISIBLE
