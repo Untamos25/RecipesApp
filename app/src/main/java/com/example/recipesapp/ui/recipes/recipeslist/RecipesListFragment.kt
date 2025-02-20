@@ -6,15 +6,13 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.commit
-import androidx.fragment.app.replace
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.recipesapp.R
 import com.example.recipesapp.UiConstants.ARG_CATEGORY_ID
 import com.example.recipesapp.UiConstants.ARG_RECIPE_ID
 import com.example.recipesapp.databinding.FragmentListRecipesBinding
-import com.example.recipesapp.ui.recipes.recipe.RecipeFragment
 import java.lang.IllegalStateException
 
 class RecipesListFragment : Fragment() {
@@ -93,10 +91,7 @@ class RecipesListFragment : Fragment() {
             ARG_RECIPE_ID to recipeId
         )
 
-        parentFragmentManager.commit {
-            setReorderingAllowed(true)
-            replace<RecipeFragment>(R.id.mainContainer, args = bundle)
-        }
+        findNavController().navigate(R.id.recipeFragment, bundle)
     }
 
 }
