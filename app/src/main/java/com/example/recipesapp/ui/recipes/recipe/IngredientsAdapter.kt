@@ -44,8 +44,7 @@ class IngredientsAdapter(var dataSet: MutableList<Ingredient>) :
     }
 
     fun submitList(newList: List<Ingredient>) {
-        dataSet.clear()
-        dataSet.addAll(newList)
+        dataSet = newList.toMutableList()
         notifyDataSetChanged()
     }
 }

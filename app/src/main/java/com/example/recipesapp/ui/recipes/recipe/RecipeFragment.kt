@@ -23,9 +23,9 @@ class RecipeFragment : Fragment() {
             ?: throw IllegalStateException("Binding для FragmentRecipeBinding не должен быть null")
 
     private val viewModel: RecipeViewModel by viewModels()
+    private val ingredientsAdapter = IngredientsAdapter(mutableListOf())
+    private val methodAdapter = MethodAdapter(mutableListOf())
 
-    private lateinit var ingredientsAdapter: IngredientsAdapter
-    private lateinit var methodAdapter: MethodAdapter
     private lateinit var divider: MaterialDividerItemDecoration
 
 
@@ -43,10 +43,7 @@ class RecipeFragment : Fragment() {
 
         val recipeId = arguments?.getInt(ARG_RECIPE_ID)
 
-        ingredientsAdapter = IngredientsAdapter(mutableListOf())
-        methodAdapter = MethodAdapter(mutableListOf())
         divider = createDivider()
-
         setupSeekBar()
         initRecycler()
 
@@ -122,9 +119,10 @@ class RecipeFragment : Fragment() {
 
     private fun setupSeekBar() {
         binding.sbPortions.setOnSeekBarChangeListener(
-            PortionSeekBarListener {  progress ->
+            PortionSeekBarListener { progress ->
                 binding.tvPortionsValue.text = progress.toString()
-                viewModel.updateNumberOfPortions(progress) }
+                viewModel.updateNumberOfPortions(progress)
+            }
         )
     }
 

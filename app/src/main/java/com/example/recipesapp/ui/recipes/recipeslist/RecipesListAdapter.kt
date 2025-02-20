@@ -9,7 +9,7 @@ import com.example.recipesapp.databinding.ItemRecipeBinding
 import com.example.recipesapp.model.Recipe
 import java.io.InputStream
 
-class RecipesListAdapter(private val dataSet: List<Recipe>) :
+class RecipesListAdapter(var dataSet: List<Recipe>) :
     RecyclerView.Adapter<RecipesListAdapter.ViewHolder>() {
 
     interface OnItemClickListener {
@@ -51,4 +51,9 @@ class RecipesListAdapter(private val dataSet: List<Recipe>) :
     }
 
     override fun getItemCount() = dataSet.size
+
+    fun submitList(newList: List<Recipe>) {
+        dataSet = newList
+        notifyDataSetChanged()
+    }
 }

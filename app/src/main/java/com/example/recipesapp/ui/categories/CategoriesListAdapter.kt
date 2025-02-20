@@ -9,7 +9,7 @@ import com.example.recipesapp.databinding.ItemCategoryBinding
 import com.example.recipesapp.model.Category
 import java.io.InputStream
 
-class CategoriesListAdapter(private val dataSet: List<Category>) :
+class CategoriesListAdapter(var dataSet: List<Category>) :
     RecyclerView.Adapter<CategoriesListAdapter.ViewHolder>() {
 
     interface OnItemClickListener {
@@ -51,4 +51,9 @@ class CategoriesListAdapter(private val dataSet: List<Category>) :
     }
 
     override fun getItemCount() = dataSet.size
+
+    fun submitList(newList: List<Category>) {
+        dataSet = newList
+        notifyDataSetChanged()
+    }
 }
