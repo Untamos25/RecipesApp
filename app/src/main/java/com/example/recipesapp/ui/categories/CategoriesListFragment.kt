@@ -43,12 +43,13 @@ class CategoriesListFragment : Fragment() {
         viewModel.categoriesListState.observe(viewLifecycleOwner) { state ->
             initUI(state)
 
-            state.selectedCategory?.let {
+            if (state.openRecipeList && state.selectedCategory != null) {
                 openRecipesList(
                     state.selectedCategory.id,
                     state.selectedCategory.title,
                     state.selectedCategory.imageUrl
                 )
+                viewModel.onRecipeListOpened()
             }
         }
     }

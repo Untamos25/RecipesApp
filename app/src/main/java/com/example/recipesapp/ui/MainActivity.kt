@@ -14,17 +14,23 @@ class MainActivity : AppCompatActivity() {
         get() = _binding
             ?: throw IllegalStateException("Binding для ActivityMainBinding не должен быть null")
 
+    private val navController by lazy { findNavController(R.id.nav_host_fragment) }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         _binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         binding.btnCategories.setOnClickListener{
-            findNavController(R.id.nav_host_fragment).navigate(R.id.categoriesListFragment)
+            if (navController.currentDestination?.id != R.id.categoriesListFragment) {
+                navController.navigate(R.id.categoriesListFragment)
+            }
         }
 
         binding.btnFavourites.setOnClickListener{
-            findNavController(R.id.nav_host_fragment).navigate(R.id.favoritesFragment)
+            if (navController.currentDestination?.id != R.id.favoritesFragment) {
+                navController.navigate(R.id.favoritesFragment)
+            }
         }
     }
 
