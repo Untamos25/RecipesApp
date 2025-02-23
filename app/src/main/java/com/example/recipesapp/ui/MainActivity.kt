@@ -23,13 +23,13 @@ class MainActivity : AppCompatActivity() {
 
         binding.btnCategories.setOnClickListener{
             if (navController.currentDestination?.id != R.id.categoriesListFragment) {
-                navController.navigate(R.id.categoriesListFragment)
+                navController.navigate(R.id.global_action_to_categoriesListFragment)
             }
         }
 
         binding.btnFavourites.setOnClickListener{
             if (navController.currentDestination?.id != R.id.favoritesFragment) {
-                navController.navigate(R.id.favoritesFragment)
+                navController.navigate(R.id.global_action_to_favoritesFragment)
             }
         }
     }
