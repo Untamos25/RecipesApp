@@ -78,6 +78,6 @@ class FavoritesFragment : Fragment() {
             ARG_RECIPE_ID to recipeId
         )
 
-        findNavController().navigate(R.id.recipeFragment, bundle)
+        findNavController().navigate(R.id.action_favoritesFragment_to_recipeFragment, bundle)
     }
 }
