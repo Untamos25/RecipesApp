@@ -6,15 +6,13 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.commit
-import androidx.fragment.app.replace
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import com.example.recipesapp.R
 import com.example.recipesapp.UiConstants.ARG_CATEGORY_ID
 import com.example.recipesapp.UiConstants.ARG_CATEGORY_IMAGE_URL
 import com.example.recipesapp.UiConstants.ARG_CATEGORY_NAME
 import com.example.recipesapp.databinding.FragmentListCategoriesBinding
-import com.example.recipesapp.ui.recipes.recipeslist.RecipesListFragment
 
 class CategoriesListFragment : Fragment() {
 
@@ -45,12 +43,13 @@ class CategoriesListFragment : Fragment() {
         viewModel.categoriesListState.observe(viewLifecycleOwner) { state ->
             initUI(state)
 
-            state.selectedCategory?.let {
+            if (state.openRecipeList && state.selectedCategory != null) {
                 openRecipesList(
                     state.selectedCategory.id,
                     state.selectedCategory.title,
                     state.selectedCategory.imageUrl
                 )
+                viewModel.onRecipeListOpened()
             }
         }
     }
@@ -90,10 +89,7 @@ class CategoriesListFragment : Fragment() {
             ARG_CATEGORY_IMAGE_URL to categoryImageUrl
         )
 
-        parentFragmentManager.commit {
-            setReorderingAllowed(true)
-            replace<RecipesListFragment>(R.id.mainContainer, args = bundle)
-        }
+        findNavController().navigate(R.id.action_categoriesListFragment_to_recipesListFragment, bundle)
     }
 
 }

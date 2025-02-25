@@ -12,7 +12,8 @@ class CategoriesListViewModel : ViewModel() {
 
     data class CategoriesListState(
         val categoriesList: List<Category>? = null,
-        val selectedCategory: Category? = null
+        val selectedCategory: Category? = null,
+        val openRecipeList: Boolean = false
     )
 
     private val _categoriesListState = MutableLiveData<CategoriesListState>()
@@ -38,10 +39,18 @@ class CategoriesListViewModel : ViewModel() {
 
         selectedCategory?.let { selectedCategory ->
             _categoriesListState.value = categoriesListState.value?.copy(
-                selectedCategory = selectedCategory
+                selectedCategory = selectedCategory,
+                openRecipeList = true
             )
         }
         Log.i("!!!", "Произведён переход в категорию ${selectedCategory?.title}")
+    }
+
+    fun onRecipeListOpened() {
+        _categoriesListState.value = categoriesListState.value?.copy(
+            openRecipeList = false,
+            selectedCategory = null
+        )
     }
 
 }
