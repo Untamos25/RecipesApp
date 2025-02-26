@@ -7,8 +7,8 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.recipesapp.UiConstants.ARG_CATEGORY_ID
 import com.example.recipesapp.databinding.FragmentListRecipesBinding
 import java.lang.IllegalStateException
 
@@ -20,6 +20,7 @@ class RecipesListFragment : Fragment() {
             ?: throw IllegalStateException("Binding для FragmentListRecipesBinding не должен быть null")
 
     private val viewModel: RecipesListViewModel by viewModels()
+    private val recipesListFragmentArgs: RecipesListFragmentArgs by navArgs()
     private val recipesListAdapter = RecipesListAdapter(listOf())
 
     override fun onCreateView(
@@ -34,14 +35,11 @@ class RecipesListFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val categoryId = arguments?.getInt(ARG_CATEGORY_ID)
+        val categoryId = recipesListFragmentArgs.category.id
 
         initRecycler()
 
-        categoryId?.let {
-            viewModel.loadRecipesList(categoryId)
-        }
-
+        viewModel.loadRecipesList(categoryId)
         viewModel.recipesListState.observe(viewLifecycleOwner) { state ->
             initUI(state)
         }
