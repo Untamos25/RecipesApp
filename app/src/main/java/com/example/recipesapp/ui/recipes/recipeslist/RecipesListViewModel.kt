@@ -31,19 +31,21 @@ class RecipesListViewModel(application: Application) : AndroidViewModel(applicat
 //        TODO Релаизовать загрузку из сети
 
         val category = STUB.getCategoryByCategoryId(categoryId)
+            ?: throw IllegalArgumentException("Категория с id $categoryId не найдена")
         val recipesList = STUB.getRecipesByCategoryId(categoryId)
-        var categoryImage: Drawable? = null
-        category?.imageUrl?.let { imageUrl ->
-            categoryImage = loadImageFromAssets(imageUrl)
-        }
+        val categoryImage: Drawable? = loadImageFromAssets(category.imageUrl)
 
         _recipesListState.value = recipesListState.value?.copy(
             category = category,
             recipesList = recipesList,
             categoryImage = categoryImage
-        ) ?: RecipesListState(category = category, recipesList = recipesList, categoryImage = categoryImage)
+        ) ?: RecipesListState(
+            category = category,
+            recipesList = recipesList,
+            categoryImage = categoryImage
+        )
 
-        Log.i("!!!", "Список рецептов категории ${category?.title} загружен")
+        Log.i("!!!", "Список рецептов категории ${category.title} загружен")
     }
 
     private fun loadImageFromAssets(imageUrl: String): Drawable? {
