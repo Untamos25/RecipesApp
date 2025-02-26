@@ -8,9 +8,9 @@ import android.widget.SeekBar
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.recipesapp.R
-import com.example.recipesapp.UiConstants.ARG_RECIPE_ID
 import com.example.recipesapp.databinding.FragmentRecipeBinding
 import com.google.android.material.divider.MaterialDividerItemDecoration
 import java.lang.IllegalStateException
@@ -23,6 +23,7 @@ class RecipeFragment : Fragment() {
             ?: throw IllegalStateException("Binding для FragmentRecipeBinding не должен быть null")
 
     private val viewModel: RecipeViewModel by viewModels()
+    private val recipeFragmentArgs: RecipeFragmentArgs by navArgs()
     private val ingredientsAdapter = IngredientsAdapter(mutableListOf())
     private val methodAdapter = MethodAdapter(mutableListOf())
 
@@ -41,16 +42,13 @@ class RecipeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val recipeId = arguments?.getInt(ARG_RECIPE_ID)
+        val recipeId = recipeFragmentArgs.recipeId
 
         divider = createDivider()
         setupSeekBar()
         initRecycler()
 
-        recipeId?.let {
-            viewModel.loadRecipe(recipeId)
-        }
-
+        viewModel.loadRecipe(recipeId)
         viewModel.recipeState.observe(viewLifecycleOwner) { state ->
             initUI(state)
         }
