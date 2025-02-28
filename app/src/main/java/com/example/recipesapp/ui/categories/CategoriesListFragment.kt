@@ -4,15 +4,11 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
-import com.example.recipesapp.R
-import com.example.recipesapp.UiConstants.ARG_CATEGORY_ID
-import com.example.recipesapp.UiConstants.ARG_CATEGORY_IMAGE_URL
-import com.example.recipesapp.UiConstants.ARG_CATEGORY_NAME
 import com.example.recipesapp.databinding.FragmentListCategoriesBinding
+import com.example.recipesapp.model.Category
 
 class CategoriesListFragment : Fragment() {
 
@@ -44,11 +40,7 @@ class CategoriesListFragment : Fragment() {
             initUI(state)
 
             if (state.openRecipeList && state.selectedCategory != null) {
-                openRecipesList(
-                    state.selectedCategory.id,
-                    state.selectedCategory.title,
-                    state.selectedCategory.imageUrl
-                )
+                openRecipesList(state.selectedCategory)
                 viewModel.onRecipeListOpened()
             }
         }
@@ -78,18 +70,12 @@ class CategoriesListFragment : Fragment() {
         }
     }
 
-    private fun openRecipesList(
-        categoryId: Int,
-        categoryName: String,
-        categoryImageUrl: String
-    ) {
-        val bundle = bundleOf(
-            ARG_CATEGORY_ID to categoryId,
-            ARG_CATEGORY_NAME to categoryName,
-            ARG_CATEGORY_IMAGE_URL to categoryImageUrl
+    private fun openRecipesList(category: Category) {
+        findNavController().navigate(
+            CategoriesListFragmentDirections.actionCategoriesListFragmentToRecipesListFragment(
+                category
+            )
         )
-
-        findNavController().navigate(R.id.action_categoriesListFragment_to_recipesListFragment, bundle)
     }
 
 }
