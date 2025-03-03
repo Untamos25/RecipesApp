@@ -8,8 +8,14 @@ import com.example.recipesapp.R
 import com.example.recipesapp.databinding.ActivityMainBinding
 import com.example.recipesapp.model.Category
 import kotlinx.serialization.json.Json
-import java.net.HttpURLConnection
-import java.net.URL
+import okhttp3.Call
+import okhttp3.Callback
+import okhttp3.Dispatcher
+import okhttp3.OkHttpClient
+import okhttp3.Request
+import okhttp3.Response
+import okhttp3.logging.HttpLoggingInterceptor
+import java.io.IOException
 import java.util.concurrent.Executors
 
 
@@ -21,46 +27,57 @@ class MainActivity : AppCompatActivity() {
             ?: throw IllegalStateException("Binding для ActivityMainBinding не должен быть null")
 
     private val navController by lazy { findNavController(R.id.nav_host_fragment) }
-
     private val threadPool = Executors.newFixedThreadPool(10)
+    private val dispatcher = Dispatcher(threadPool).apply { maxRequests = 10 }
+
+    private val client = OkHttpClient.Builder()
+        .dispatcher(dispatcher)
+        .addInterceptor(HttpLoggingInterceptor().apply {
+            level = HttpLoggingInterceptor.Level.BODY
+        })
+        .build()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         _binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        Log.i("!!!", "Метод onCreate() выполняется на потоке: ${Thread.currentThread().name}")
+        val categoryRequest = Request.Builder()
+            .url("https://recipes.androidsprint.ru/api/category")
+            .build()
 
-        val thread = Thread {
-            Log.i("!!!", "Выполняю запрос на потоке: ${Thread.currentThread().name}")
-            val categoryUrl = URL("https://recipes.androidsprint.ru/api/category")
-            val categoryConnection = categoryUrl.openConnection() as HttpURLConnection
-            categoryConnection.connect()
-            val categoryBody = categoryConnection.inputStream.bufferedReader().readText()
+        client.newCall(categoryRequest).enqueue(object : Callback {
+            override fun onFailure(call: Call, e: IOException) {
+                Log.e("!!!", "Ошибка при получении категорий", e)
+            }
 
-            Log.i("!!!", "responseCode: ${categoryConnection.responseCode}")
-            Log.i("!!!", "responseMessage: ${categoryConnection.responseMessage}")
-            Log.i("!!!", "Body: $categoryBody")
+            override fun onResponse(call: Call, response: Response) {
+                val categoryBody = response.body?.string()
+                Log.i("!!!", "categoryBody: $categoryBody")
 
-            val categories: List<Category> = Json.decodeFromString(categoryBody)
-            Log.i("!!!", "Категории после десериализации: $categories")
+                val categories: List<Category> = Json.decodeFromString(categoryBody ?: "[]")
+                Log.i("!!!", "Категории после десериализации: $categories")
 
-            val categoryIds = categories.map { it.id }
+                val categoryIds = categories.map { it.id }
 
-            categoryIds.forEach { categoryId ->
-                threadPool.execute {
-                        val recipeUrl = URL("https://recipes.androidsprint.ru/api/category/${categoryId}/recipes")
-                        val recipeConnection = recipeUrl.openConnection() as HttpURLConnection
-                        recipeConnection.connect()
-                        val recipeBody = recipeConnection.inputStream.bufferedReader().readText()
+                categoryIds.forEach { categoryId ->
+                    val recipeRequest = Request.Builder()
+                        .url("https://recipes.androidsprint.ru/api/category/${categoryId}/recipes")
+                        .build()
 
-                        Log.i("!!!", "Поток [${Thread.currentThread().name}]\nРецепты для категории с id $categoryId: $recipeBody")
+                    client.newCall(recipeRequest).enqueue(object : Callback {
+                        override fun onFailure(call: Call, e: IOException) {
+                            Log.e("!!!", "Ошибка при получении рецептов для котегории $categoryId", e)
+                        }
+
+                        override fun onResponse(call: Call, response: Response) {
+                            val recipesBody = response.body?.string()
+                            Log.i("!!!", "Рецепты для категории $categoryId: $recipesBody")
+                        }
+                    })
                 }
             }
-        }
-
-        thread.start()
-
+        })
 
         binding.btnCategories.setOnClickListener {
             if (navController.currentDestination?.id != R.id.categoriesListFragment) {
@@ -78,6 +95,7 @@ class MainActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         _binding = null
+        dispatcher.cancelAll()
         threadPool.shutdown()
     }
 }
