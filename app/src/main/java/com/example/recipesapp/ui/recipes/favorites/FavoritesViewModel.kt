@@ -8,7 +8,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.example.recipesapp.DataConstants.FAVORITES_KEY
 import com.example.recipesapp.DataConstants.FAVORITES_PREFS
-import com.example.recipesapp.data.STUB
+import com.example.recipesapp.data.RecipesRepository
 import com.example.recipesapp.model.Recipe
 
 class FavoritesViewModel(application: Application) : AndroidViewModel(application) {
@@ -21,21 +21,24 @@ class FavoritesViewModel(application: Application) : AndroidViewModel(applicatio
     val favoritesState: LiveData<FavoritesState>
         get() = _favoritesState
 
+    private val repository = RecipesRepository()
+
     init {
         Log.i("!!!", "FavoritesViewModel инициализирована")
     }
 
     fun loadFavorites() {
-//        TODO Релаизовать загрузку из сети
+        repository.threadPool.execute {
+            val favoritesIdsList = getFavorites().joinToString(",")
+            val favoritesList = repository.getRecipesByIds(favoritesIdsList)
 
-        val favoritesIdsList = getFavorites()
-        val favoritesList = STUB.getRecipesByIds(favoritesIdsList)
-
-        _favoritesState.value = favoritesState.value?.copy(
-            favoritesList = favoritesList
-        ) ?: FavoritesState(favoritesList = favoritesList)
-
-        Log.i("!!!", "Список избранного из ${favoritesList.size} элементов загружен")
+            _favoritesState.postValue(
+                favoritesState.value?.copy(
+                    favoritesList = favoritesList
+                ) ?: FavoritesState(favoritesList = favoritesList)
+            )
+            Log.i("!!!", "Список избранного из ${favoritesList?.size} элементов загружен")
+        }
     }
 
     private fun getFavorites(): MutableSet<String> {
@@ -46,5 +49,4 @@ class FavoritesViewModel(application: Application) : AndroidViewModel(applicatio
         val storedSet = sharedPrefs.getStringSet(FAVORITES_KEY, emptySet()) ?: emptySet()
         return HashSet(storedSet)
     }
-
 }

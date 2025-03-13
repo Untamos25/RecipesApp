@@ -1,14 +1,17 @@
 package com.example.recipesapp.ui.categories
 
+import android.app.Application
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
+import android.widget.Toast
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import com.example.recipesapp.data.STUB.getCategories
-import com.example.recipesapp.data.STUB.getCategoryByCategoryId
+import com.example.recipesapp.data.RecipesRepository
 import com.example.recipesapp.model.Category
 
-class CategoriesListViewModel : ViewModel() {
+class CategoriesListViewModel(application: Application) : AndroidViewModel(application) {
 
     data class CategoriesListState(
         val categoriesList: List<Category>? = null,
@@ -20,30 +23,50 @@ class CategoriesListViewModel : ViewModel() {
     val categoriesListState: LiveData<CategoriesListState>
         get() = _categoriesListState
 
+    private val repository = RecipesRepository()
 
     init {
         Log.i("!!!", "CategoriesViewModel инициализирована")
     }
 
     fun loadCategories() {
-        val categoriesList = getCategories()
+        repository.threadPool.execute {
+            val categoriesList = repository.getCategories()
 
-        _categoriesListState.value = categoriesListState.value?.copy(
-            categoriesList = categoriesList
-        ) ?: CategoriesListState(categoriesList = categoriesList)
-        Log.i("!!!", "Список категорий из ${categoriesList.size} элементов загружен")
+            if (categoriesList != null) {
+                _categoriesListState.postValue(
+                    categoriesListState.value?.copy(
+                        categoriesList = categoriesList
+                    ) ?: CategoriesListState(categoriesList = categoriesList)
+                )
+                Log.i("!!!", "Список категорий из ${categoriesList.size} элементов загружен")
+            } else {
+                Handler(Looper.getMainLooper()).post {
+                    Toast.makeText(
+                        getApplication(),
+                        "Не удалось загрузить категории",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+        }
     }
 
-    fun onCategoryClicked(categoryId: Int) {
-        val selectedCategory = getCategoryByCategoryId(categoryId)
 
-        selectedCategory?.let { selectedCategory ->
-            _categoriesListState.value = categoriesListState.value?.copy(
-                selectedCategory = selectedCategory,
-                openRecipeList = true
-            )
+    fun onCategoryClicked(categoryId: Int) {
+        repository.threadPool.execute {
+            val selectedCategory = repository.getCategoryById(categoryId)
+
+            selectedCategory?.let { category ->
+                _categoriesListState.postValue(
+                    categoriesListState.value?.copy(
+                        selectedCategory = category,
+                        openRecipeList = true
+                    )
+                )
+                Log.i("!!!", "Произведён переход в категорию ${category.title}")
+            }
         }
-        Log.i("!!!", "Произведён переход в категорию ${selectedCategory?.title}")
     }
 
     fun onRecipeListOpened() {
