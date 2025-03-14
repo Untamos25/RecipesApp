@@ -24,15 +24,19 @@ class IngredientsAdapter(var dataSet: MutableList<Ingredient>) :
 
     override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
         val ingredient = dataSet[position]
-        val calculatedQuantity = BigDecimal(ingredient.quantity) * BigDecimal(quantity)
-        val displayQuantity = calculatedQuantity
-            .setScale(1, RoundingMode.HALF_UP)
-            .stripTrailingZeros()
-            .toPlainString()
+
+        val quantityBigDecimal = ingredient.quantity.toBigDecimalOrNull()
 
         with(viewHolder.binding) {
             tvIngredientName.text = ingredient.description
-            tvIngredientQuantity.text = "$displayQuantity ${ingredient.unitOfMeasure}"
+
+            tvIngredientQuantity.text = quantityBigDecimal?.let { quantityBigDecimal ->
+                (quantityBigDecimal * BigDecimal(quantity))
+                    .setScale(1, RoundingMode.HALF_UP)
+                    .stripTrailingZeros()
+                    .toPlainString() + " ${ingredient.unitOfMeasure}"
+            } ?: ingredient.quantity
+
         }
     }
 
