@@ -60,6 +60,7 @@ dependencies {
     implementation(libs.logging.interceptor)
     implementation(libs.retrofit2.retrofit)
     implementation(libs.retrofit2.kotlinx.serialization.converter)
+    implementation(libs.glide)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

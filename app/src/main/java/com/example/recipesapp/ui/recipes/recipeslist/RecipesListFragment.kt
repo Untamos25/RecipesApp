@@ -9,7 +9,10 @@ import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.bumptech.glide.Glide
+import com.example.recipesapp.R
 import com.example.recipesapp.databinding.FragmentListRecipesBinding
+import com.example.recipesapp.model.getFullImageUrl
 import java.lang.IllegalStateException
 
 class RecipesListFragment : Fragment() {
@@ -73,7 +76,13 @@ class RecipesListFragment : Fragment() {
         with(binding) {
             category?.let {
                 tvCategory.text = it.title
-                imgCategory.setImageDrawable(state.categoryImage)
+
+                Glide.with(this@RecipesListFragment)
+                    .load(category.getFullImageUrl())
+                    .placeholder(R.drawable.img_placeholder)
+                    .error(R.drawable.img_error)
+                    .into(imgCategory)
+
             }
             recipesList?.let {
                 recipesListAdapter.submitList(it)
