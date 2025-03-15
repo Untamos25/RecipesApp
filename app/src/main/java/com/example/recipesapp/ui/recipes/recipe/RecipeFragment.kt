@@ -10,8 +10,10 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.bumptech.glide.Glide
 import com.example.recipesapp.R
 import com.example.recipesapp.databinding.FragmentRecipeBinding
+import com.example.recipesapp.model.getFullImageUrl
 import com.google.android.material.divider.MaterialDividerItemDecoration
 import java.lang.IllegalStateException
 
@@ -92,7 +94,11 @@ class RecipeFragment : Fragment() {
                 ingredientsAdapter.submitList(recipe.ingredients)
                 methodAdapter.submitList(recipe.method)
 
-                imgRecipe.setImageDrawable(state.recipeImage)
+                Glide.with(this@RecipeFragment)
+                    .load(recipe.getFullImageUrl())
+                    .placeholder(R.drawable.img_placeholder)
+                    .error(R.drawable.img_error)
+                    .into(imgRecipe)
             }
         }
     }

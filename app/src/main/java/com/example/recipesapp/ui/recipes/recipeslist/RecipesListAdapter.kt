@@ -1,13 +1,13 @@
 package com.example.recipesapp.ui.recipes.recipeslist
 
-import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.example.recipesapp.R
 import com.example.recipesapp.databinding.ItemRecipeBinding
 import com.example.recipesapp.model.Recipe
-import java.io.InputStream
+import com.example.recipesapp.model.getFullImageUrl
 
 class RecipesListAdapter(var dataSet: List<Recipe>) :
     RecyclerView.Adapter<RecipesListAdapter.ViewHolder>() {
@@ -33,19 +33,19 @@ class RecipesListAdapter(var dataSet: List<Recipe>) :
 
     override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
         val recipe = dataSet[position]
+
         with(viewHolder.binding) {
             tvTitle.text = recipe.title
 
-            try {
-                val context = viewHolder.itemView.context
-                val inputStream: InputStream = context.assets.open(recipe.imageUrl)
-                val drawable = Drawable.createFromStream(inputStream, null)
-                imageCategory.setImageDrawable(drawable)
-                imageCategory.contentDescription =
-                    context.getString(R.string.category_image, recipe.title)
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
+            Glide.with(viewHolder.itemView.context)
+                .load(recipe.getFullImageUrl())
+                .placeholder(R.drawable.img_placeholder)
+                .error(R.drawable.img_error)
+                .into(imageCategory)
+
+            imageCategory.contentDescription =
+                viewHolder.itemView.context.getString(R.string.category_image, recipe.title)
+
             root.setOnClickListener { itemClickListener?.onItemClick(recipe.id) }
         }
     }
