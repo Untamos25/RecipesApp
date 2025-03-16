@@ -6,10 +6,12 @@ import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
 import com.example.recipesapp.DataConstants.FAVORITES_KEY
 import com.example.recipesapp.DataConstants.FAVORITES_PREFS
 import com.example.recipesapp.data.RecipesRepository
 import com.example.recipesapp.model.Recipe
+import kotlinx.coroutines.launch
 
 class FavoritesViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -28,15 +30,13 @@ class FavoritesViewModel(application: Application) : AndroidViewModel(applicatio
     }
 
     fun loadFavorites() {
-        repository.threadPool.execute {
+        viewModelScope.launch {
             val favoritesIdsList = getFavorites().joinToString(",")
             val favoritesList = repository.getRecipesByIds(favoritesIdsList)
 
-            _favoritesState.postValue(
-                favoritesState.value?.copy(
-                    favoritesList = favoritesList
-                ) ?: FavoritesState(favoritesList = favoritesList)
-            )
+            _favoritesState.value = favoritesState.value?.copy(
+                favoritesList = favoritesList
+            ) ?: FavoritesState(favoritesList = favoritesList)
             Log.i("!!!", "Список избранного из ${favoritesList?.size} элементов загружен")
         }
     }
