@@ -5,14 +5,16 @@ import com.example.recipesapp.DataConstants.BASE_URL
 import com.example.recipesapp.model.Category
 import com.example.recipesapp.model.Recipe
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
+import kotlinx.coroutines.CoroutineDispatcher
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
-import java.util.concurrent.Executors
 
-class RecipesRepository {
+class RecipesRepository(private val dispatcher: CoroutineDispatcher = Dispatchers.IO) {
 
     private val contentType = "application/json".toMediaType()
 
@@ -32,29 +34,29 @@ class RecipesRepository {
 
     private val recipeApiService: RecipeApiService = retrofit.create(RecipeApiService::class.java)
 
-    val threadPool = Executors.newFixedThreadPool(10)
-
-    fun getCategories(): List<Category>? {
-        return try {
-            recipeApiService.getCategories().execute().body()
+    suspend fun getCategories(): List<Category>? = withContext(dispatcher) {
+        try {
+            recipeApiService.getCategories()
         } catch (e: Exception) {
             Log.e("!!! RecipesRepository", "Ошибка при получении списка категорий", e)
             null
         }
     }
 
-    fun getCategoryById(categoryId: Int): Category? {
-        return try {
-            recipeApiService.getCategoryById(categoryId).execute().body()
+
+    suspend fun getCategoryById(categoryId: Int): Category? = withContext(dispatcher) {
+        try {
+            recipeApiService.getCategoryById(categoryId)
         } catch (e: Exception) {
             Log.e("!!! RecipesRepository", "Ошибка при получении категории по её id", e)
             null
         }
     }
 
-    fun getRecipesByCategoryId(categoryId: Int): List<Recipe>? {
-        return try {
-            recipeApiService.getRecipesByCategoryId(categoryId).execute().body()
+
+    suspend fun getRecipesByCategoryId(categoryId: Int): List<Recipe>? = withContext(dispatcher) {
+        try {
+            recipeApiService.getRecipesByCategoryId(categoryId)
         } catch (e: Exception) {
             Log.e(
                 "!!! RecipesRepository",
@@ -65,21 +67,24 @@ class RecipesRepository {
         }
     }
 
-    fun getRecipeById(recipeId: Int): Recipe? {
-        return try {
-            recipeApiService.getRecipeById(recipeId).execute().body()
+
+    suspend fun getRecipeById(recipeId: Int): Recipe? = withContext(dispatcher) {
+        try {
+            recipeApiService.getRecipeById(recipeId)
         } catch (e: Exception) {
             Log.e("!!! RecipesRepository", "Ошибка при получении рецепта по его id", e)
             null
         }
     }
 
-    fun getRecipesByIds(setIds: String): List<Recipe>? {
-        return try {
-            recipeApiService.getRecipesByIds(setIds).execute().body()
+
+    suspend fun getRecipesByIds(setIds: String): List<Recipe>? = withContext(dispatcher) {
+        try {
+            recipeApiService.getRecipesByIds(setIds)
         } catch (e: Exception) {
             Log.e("!!! RecipesRepository", "Ошибка при получении списка рецептов по их id", e)
             null
         }
     }
+
 }
