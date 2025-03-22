@@ -23,7 +23,7 @@ class CategoriesListViewModel(application: Application) : AndroidViewModel(appli
     val categoriesListState: LiveData<CategoriesListState>
         get() = _categoriesListState
 
-    private val repository = RecipesRepository()
+    private val repository = RecipesRepository(application)
 
     init {
         Log.i("!!!", "CategoriesViewModel инициализирована")
@@ -31,13 +31,34 @@ class CategoriesListViewModel(application: Application) : AndroidViewModel(appli
 
     fun loadCategories() {
         viewModelScope.launch {
-            val categoriesList = repository.getCategories()
+            var categoriesList: List<Category>? = repository.getCategoriesFromCache()
+
+            if (categoriesList?.isNotEmpty() == true) {
+                Log.i("!!! CategoriesListViewModel", "Категории загружены из кэша")
+                _categoriesListState.value = categoriesListState.value?.copy(
+                    categoriesList = categoriesList
+                ) ?: CategoriesListState(categoriesList = categoriesList)
+                Log.i(
+                    "!!!",
+                    "Список категорий из ${categoriesList.size} элементов загружен из кэша"
+                )
+            }
+
+            Log.i("!!! CategoriesListViewModel", "Загружаю категории из сети")
+            categoriesList = repository.getCategories()
+
+            categoriesList?.let {
+                Log.i("!!! CategoriesListViewModel", "Категории загружены из сети")
+                repository.insertCategoriesInDatabase(categoriesList)
+                Log.i("!!! CategoriesListViewModel", "Категории записаны в БД")
+            }
+
 
             if (categoriesList != null) {
                 _categoriesListState.value = categoriesListState.value?.copy(
                     categoriesList = categoriesList
                 ) ?: CategoriesListState(categoriesList = categoriesList)
-                Log.i("!!!", "Список категорий из ${categoriesList.size} элементов загружен")
+                Log.i("!!!", "Список категорий из ${categoriesList.size} элементов загружен из сети")
             } else {
                 Toast.makeText(
                     getApplication(),
@@ -47,7 +68,6 @@ class CategoriesListViewModel(application: Application) : AndroidViewModel(appli
             }
         }
     }
-
 
     fun onCategoryClicked(categoryId: Int) {
         viewModelScope.launch {

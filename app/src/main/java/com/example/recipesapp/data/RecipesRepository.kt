@@ -1,6 +1,8 @@
 package com.example.recipesapp.data
 
+import android.app.Application
 import android.util.Log
+import androidx.room.Room
 import com.example.recipesapp.DataConstants.BASE_URL
 import com.example.recipesapp.model.Category
 import com.example.recipesapp.model.Recipe
@@ -14,7 +16,10 @@ import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 
-class RecipesRepository(private val dispatcher: CoroutineDispatcher = Dispatchers.IO) {
+class RecipesRepository(
+    application: Application,
+    private val dispatcher: CoroutineDispatcher = Dispatchers.IO
+) {
 
     private val contentType = "application/json".toMediaType()
 
@@ -33,6 +38,33 @@ class RecipesRepository(private val dispatcher: CoroutineDispatcher = Dispatcher
         .build()
 
     private val recipeApiService: RecipeApiService = retrofit.create(RecipeApiService::class.java)
+
+    val database = Room.databaseBuilder(
+        application.applicationContext,
+        Database::class.java,
+        "database"
+    ).build()
+
+    val categoriesDao = database.categoriesDao()
+
+
+    suspend fun getCategoriesFromCache() = withContext(dispatcher) {
+        try {
+            categoriesDao.getAllCategories()
+        } catch (e: Exception) {
+            Log.e("!!! RecipesRepository", "Ошибка при получении списка категорий из кэша", e)
+            null
+        }
+    }
+
+    suspend fun insertCategoriesInDatabase(categories: List<Category>) = withContext(dispatcher) {
+        try {
+            categoriesDao.insertCategories(categories)
+        } catch (e: Exception) {
+            Log.e("!!! RecipesRepository", "Ошибка при записи данных в БД.", e)
+            null
+        }
+    }
 
     suspend fun getCategories(): List<Category>? = withContext(dispatcher) {
         try {
