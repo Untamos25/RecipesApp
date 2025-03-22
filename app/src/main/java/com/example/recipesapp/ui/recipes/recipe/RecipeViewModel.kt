@@ -27,7 +27,7 @@ class RecipeViewModel(application: Application) : AndroidViewModel(application) 
     val recipeState: LiveData<RecipeState>
         get() = _recipeState
 
-    private val repository = RecipesRepository()
+    private val repository = RecipesRepository(application)
 
     init {
         Log.i("!!!", "RecipeViewModel инициализирована")
