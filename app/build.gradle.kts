@@ -3,6 +3,7 @@ plugins {
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.androidx.navigation)
+    alias(libs.plugins.ksp)
     id("kotlin-parcelize")
 }
 
@@ -61,6 +62,8 @@ dependencies {
     implementation(libs.retrofit2.retrofit)
     implementation(libs.retrofit2.kotlinx.serialization.converter)
     implementation(libs.glide)
+    implementation(libs.androidx.room.runtime)
+    ksp(libs.androidx.room.compiler)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
