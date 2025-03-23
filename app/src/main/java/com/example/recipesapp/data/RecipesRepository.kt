@@ -43,7 +43,7 @@ class RecipesRepository(
         application.applicationContext,
         Database::class.java,
         "database"
-    ).build()
+    ).fallbackToDestructiveMigration().build()
 
     val categoriesDao = database.categoriesDao()
 
