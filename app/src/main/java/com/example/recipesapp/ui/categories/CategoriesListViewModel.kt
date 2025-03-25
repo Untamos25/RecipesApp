@@ -23,7 +23,7 @@ class CategoriesListViewModel(application: Application) : AndroidViewModel(appli
     val categoriesListState: LiveData<CategoriesListState>
         get() = _categoriesListState
 
-    private val repository = RecipesRepository()
+    private val repository = RecipesRepository(application)
 
     init {
         Log.i("!!!", "CategoriesViewModel инициализирована")
@@ -31,14 +31,48 @@ class CategoriesListViewModel(application: Application) : AndroidViewModel(appli
 
     fun loadCategories() {
         viewModelScope.launch {
-            val categoriesList = repository.getCategories()
+            val cachedCategories = repository.getCategoriesFromCache()
 
-            if (categoriesList != null) {
+            Log.i("!!!", "cached = $cachedCategories")
+
+            if (cachedCategories?.isNotEmpty() == true) {
+                Log.i("!!! CategoriesListViewModel", "Категории загружены из кэша")
                 _categoriesListState.value = categoriesListState.value?.copy(
-                    categoriesList = categoriesList
-                ) ?: CategoriesListState(categoriesList = categoriesList)
-                Log.i("!!!", "Список категорий из ${categoriesList.size} элементов загружен")
-            } else {
+                    categoriesList = cachedCategories
+                ) ?: CategoriesListState(categoriesList = cachedCategories)
+                Log.i(
+                    "!!!",
+                    "Список категорий из ${cachedCategories.size} элементов загружен из кэша"
+                )
+            }
+
+            Log.i("!!! CategoriesListViewModel", "Загружаю категории из сети")
+            val backendCategories = repository.getCategories()
+
+            backendCategories?.let {
+                Log.i("!!! CategoriesListViewModel", "Категории загружены из сети")
+
+                if (cachedCategories != backendCategories) {
+                    _categoriesListState.value = categoriesListState.value?.copy(
+                        categoriesList = backendCategories
+                    ) ?: CategoriesListState(categoriesList = backendCategories)
+                    Log.i(
+                        "!!!",
+                        "Список категорий из ${backendCategories.size} элементов загружен из сети"
+                    )
+
+                    repository.insertCategoriesInDatabase(backendCategories)
+                    Log.i("!!! CategoriesListViewModel", "Категории записаны в БД")
+
+                } else {
+                    Log.i(
+                        "!!! CategoriesListViewModel",
+                        "Сетевые данные совпадают с кэшем: UI не обновляется, категории в БД не заменяются"
+                    )
+                }
+            }
+
+            if (backendCategories.isNullOrEmpty() && cachedCategories.isNullOrEmpty()) {
                 Toast.makeText(
                     getApplication(),
                     "Не удалось загрузить категории",
@@ -47,7 +81,6 @@ class CategoriesListViewModel(application: Application) : AndroidViewModel(appli
             }
         }
     }
-
 
     fun onCategoryClicked(categoryId: Int) {
         viewModelScope.launch {

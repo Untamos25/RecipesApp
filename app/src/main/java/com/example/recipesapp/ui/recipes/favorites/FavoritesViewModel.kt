@@ -23,7 +23,7 @@ class FavoritesViewModel(application: Application) : AndroidViewModel(applicatio
     val favoritesState: LiveData<FavoritesState>
         get() = _favoritesState
 
-    private val repository = RecipesRepository()
+    private val repository = RecipesRepository(application)
 
     init {
         Log.i("!!!", "FavoritesViewModel инициализирована")
