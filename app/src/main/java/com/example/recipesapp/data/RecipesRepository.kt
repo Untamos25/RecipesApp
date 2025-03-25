@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.room.Room
 import com.example.recipesapp.DataConstants.BASE_URL
 import com.example.recipesapp.model.Category
+import com.example.recipesapp.model.CategoryRecipeCrossRef
 import com.example.recipesapp.model.Recipe
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import kotlinx.coroutines.CoroutineDispatcher
@@ -46,7 +47,7 @@ class RecipesRepository(
     ).fallbackToDestructiveMigration().build()
 
     val categoriesDao = database.categoriesDao()
-
+    val recipesDao = database.recipesDao()
 
     suspend fun getCategoriesFromCache() = withContext(dispatcher) {
         try {
@@ -57,14 +58,50 @@ class RecipesRepository(
         }
     }
 
+
     suspend fun insertCategoriesInDatabase(categories: List<Category>) = withContext(dispatcher) {
         try {
             categoriesDao.insertCategories(categories)
         } catch (e: Exception) {
-            Log.e("!!! RecipesRepository", "Ошибка при записи данных в БД.", e)
+            Log.e("!!! RecipesRepository", "Ошибка при записи категорий в БД.", e)
             null
         }
     }
+
+
+    suspend fun getRecipesForCategoryFromCache(categoryId: Int): List<Recipe>? = withContext(dispatcher) {
+        try {
+            recipesDao.getRecipesForCategory(categoryId)
+        } catch (e: Exception){
+            Log.e("!!! RecipesRepository", "Ошибка при получении рецептов из кэша для категории $categoryId", e)
+            null
+        }
+    }
+
+
+    suspend fun insertRecipesForCategoryInDatabase(categoryId: Int, recipes: List<Recipe>) = withContext(dispatcher){
+        try {
+            recipesDao.insertRecipes(recipes)
+            val crossRefs = recipes.map { recipe ->
+                CategoryRecipeCrossRef(categoryId, recipe.id)
+            }
+            recipesDao.insertCategoryRecipeCrossRef(crossRefs)
+        }
+        catch (e: Exception) {
+            Log.e("!!! RecipesRepository", "Ошибка при записи рецептов в БД.", e)
+        }
+    }
+
+
+    suspend fun getRecipeByIdFromCache(recipeId: Int): Recipe? = withContext(dispatcher) {
+        try {
+            recipesDao.getRecipeById(recipeId)
+        } catch (e: Exception){
+            Log.e("!!! RecipesRepository", "Ошибка при получении рецепта с id $recipeId", e)
+            null
+        }
+    }
+
 
     suspend fun getCategories(): List<Category>? = withContext(dispatcher) {
         try {

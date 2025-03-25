@@ -26,31 +26,59 @@ class RecipesListViewModel(application: Application) : AndroidViewModel(applicat
     private val repository = RecipesRepository(application)
 
     init {
-        Log.i("!!!", "RecipesListViewModel инициализирована")
+        Log.i("!!! RecipesListViewModel", "RecipesListViewModel инициализирована")
     }
 
     fun loadRecipesList(categoryId: Int) {
-
         viewModelScope.launch {
-            val category = repository.getCategoryById(categoryId)
-            val recipesList = repository.getRecipesByCategoryId(categoryId)
+            val cachedCategory = repository.getCategoriesFromCache()
+                ?.find { cachedCategory -> cachedCategory.id == categoryId }
+            val cachedRecipes = repository.getRecipesForCategoryFromCache(categoryId)
 
-            if (category != null) {
+            if (cachedRecipes?.isNotEmpty() == true) {
+                _recipesListState.value = recipesListState.value?.copy(
+                    category = cachedCategory,
+                    recipesList = cachedRecipes
+                ) ?: RecipesListState(category = cachedCategory, recipesList = cachedRecipes)
+                Log.i(
+                    "!!! RecipesListViewModel",
+                    "Список рецептов из ${cachedRecipes.size} элементов загружен из кэша"
+                )
+            }
 
-                if (recipesList != null) {
+            Log.i("!!! RecipesListViewModel", "Загружаю список рецептов из сети")
+            val backendCategory = repository.getCategoryById(categoryId)
+            val backendRecipes = repository.getRecipesByCategoryId(categoryId)
+
+            backendRecipes?.let {
+                if (cachedRecipes != backendRecipes) {
                     _recipesListState.value = recipesListState.value?.copy(
-                        category = category,
-                        recipesList = recipesList,
+                        category = backendCategory,
+                        recipesList = backendRecipes,
                     ) ?: RecipesListState(
-                        category = category,
-                        recipesList = recipesList,
+                        category = backendCategory,
+                        recipesList = backendRecipes,
+                    )
+                    Log.i(
+                        "!!! RecipesListViewModel",
+                        "Список рецептов категории ${backendCategory?.title} загружен из сети"
+                    )
+
+                    repository.insertRecipesForCategoryInDatabase(categoryId, backendRecipes)
+                    Log.i("!!! RecipesListViewModel", "Рецепты записаны в БД")
+
+                } else {
+                    Log.i(
+                        "!!! RecipesListViewModel",
+                        "Сетевые данные совпадают с кэшем: UI не обновляется, рецепты в БД не заменяются"
                     )
                 }
-                Log.i("!!!", "Список рецептов категории ${category.title} загружен")
-            } else {
+            }
+
+            if (cachedRecipes.isNullOrEmpty() && backendRecipes.isNullOrEmpty()) {
                 Toast.makeText(
                     getApplication(),
-                    "Не удалось загрузить список рецептов",
+                    "Не удалось загрузить рецепты для выбранной категории",
                     Toast.LENGTH_SHORT
                 ).show()
             }
