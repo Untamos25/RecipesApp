@@ -30,24 +30,39 @@ class RecipeViewModel(application: Application) : AndroidViewModel(application) 
     private val repository = RecipesRepository(application)
 
     init {
-        Log.i("!!!", "RecipeViewModel инициализирована")
+        Log.i("!!! RecipeViewModel", "RecipeViewModel инициализирована")
     }
 
     fun loadRecipe(recipeId: Int) {
         viewModelScope.launch {
-            val recipe = repository.getRecipeById(recipeId)
-            val isFavorite = getFavorites().contains(recipeId.toString())
+            val cachedRecipe = repository.getRecipeByIdFromCache(recipeId)
 
-            if (recipe != null) {
+            if (cachedRecipe != null) {
                 _recipeState.value = recipeState.value?.copy(
-                    recipe = recipe,
-                    isFavorite = isFavorite,
-                ) ?: RecipeState(
-                    recipe = recipe,
-                    isFavorite = isFavorite,
-                )
-                Log.i("!!!", "Рецепт с id $recipeId загружен")
-            } else {
+                    recipe = cachedRecipe
+                ) ?: RecipeState(recipe = cachedRecipe)
+                Log.i("!!! RecipeViewModel", "Рецепт загружен из кэша")
+            }
+
+            Log.i("!!! RecipeViewModel", "Загружаю рецепт из сети")
+            val backendRecipe = repository.getRecipeById(recipeId)
+
+            backendRecipe?.let {
+                if (cachedRecipe != backendRecipe) {
+                    _recipeState.value = recipeState.value?.copy(
+                        recipe = backendRecipe
+                    ) ?: RecipeState(recipe = backendRecipe)
+
+                    Log.i("!!! RecipeViewModel", "Рецепт загружен из сети")
+                } else {
+                    Log.i(
+                        "!!! RecipeViewModel",
+                        "Сетевые данные совпадают с кэшем: UI не обновляется"
+                    )
+                }
+            }
+
+            if (backendRecipe == null && cachedRecipe == null) {
                 Toast.makeText(
                     getApplication(),
                     "Не удалось загрузить рецепт",

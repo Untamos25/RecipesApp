@@ -26,22 +26,19 @@ class CategoriesListViewModel(application: Application) : AndroidViewModel(appli
     private val repository = RecipesRepository(application)
 
     init {
-        Log.i("!!!", "CategoriesViewModel инициализирована")
+        Log.i("!!! CategoriesListViewModel", "CategoriesViewModel инициализирована")
     }
 
     fun loadCategories() {
         viewModelScope.launch {
             val cachedCategories = repository.getCategoriesFromCache()
 
-            Log.i("!!!", "cached = $cachedCategories")
-
             if (cachedCategories?.isNotEmpty() == true) {
-                Log.i("!!! CategoriesListViewModel", "Категории загружены из кэша")
                 _categoriesListState.value = categoriesListState.value?.copy(
                     categoriesList = cachedCategories
                 ) ?: CategoriesListState(categoriesList = cachedCategories)
                 Log.i(
-                    "!!!",
+                    "!!! CategoriesListViewModel",
                     "Список категорий из ${cachedCategories.size} элементов загружен из кэша"
                 )
             }
@@ -50,14 +47,12 @@ class CategoriesListViewModel(application: Application) : AndroidViewModel(appli
             val backendCategories = repository.getCategories()
 
             backendCategories?.let {
-                Log.i("!!! CategoriesListViewModel", "Категории загружены из сети")
-
                 if (cachedCategories != backendCategories) {
                     _categoriesListState.value = categoriesListState.value?.copy(
                         categoriesList = backendCategories
                     ) ?: CategoriesListState(categoriesList = backendCategories)
                     Log.i(
-                        "!!!",
+                        "!!! CategoriesListViewModel",
                         "Список категорий из ${backendCategories.size} элементов загружен из сети"
                     )
 
@@ -84,14 +79,29 @@ class CategoriesListViewModel(application: Application) : AndroidViewModel(appli
 
     fun onCategoryClicked(categoryId: Int) {
         viewModelScope.launch {
-            val selectedCategory = repository.getCategoryById(categoryId)
+            val categories = _categoriesListState.value?.categoriesList
+            val selectedCategory = categories?.find { it.id == categoryId }
 
-            selectedCategory?.let { category ->
+            if (selectedCategory != null) {
                 _categoriesListState.value = categoriesListState.value?.copy(
-                    selectedCategory = category,
+                    selectedCategory = selectedCategory,
                     openRecipeList = true
                 )
-                Log.i("!!!", "Произведён переход в категорию ${category.title}")
+            } else {
+                val backendCategory = repository.getCategoryById(categoryId)
+
+                if (backendCategory != null) {
+                    _categoriesListState.value = categoriesListState.value?.copy(
+                        selectedCategory = backendCategory,
+                        openRecipeList = true
+                    )
+                } else {
+                    Toast.makeText(
+                        getApplication(),
+                        "Не удалось загрузить рецепты для выбранной категории",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
             }
         }
     }
