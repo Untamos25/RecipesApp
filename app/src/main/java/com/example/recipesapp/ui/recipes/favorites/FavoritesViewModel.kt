@@ -1,14 +1,12 @@
 package com.example.recipesapp.ui.recipes.favorites
 
 import android.app.Application
-import android.content.Context
 import android.util.Log
+import android.widget.Toast
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.example.recipesapp.DataConstants.FAVORITES_KEY
-import com.example.recipesapp.DataConstants.FAVORITES_PREFS
 import com.example.recipesapp.data.RecipesRepository
 import com.example.recipesapp.model.Recipe
 import kotlinx.coroutines.launch
@@ -17,6 +15,8 @@ class FavoritesViewModel(application: Application) : AndroidViewModel(applicatio
 
     data class FavoritesState(
         val favoritesList: List<Recipe>? = null,
+        val selectedRecipe: Recipe? = null,
+        val openRecipe: Boolean = false
     )
 
     private val _favoritesState = MutableLiveData<FavoritesState>()
@@ -31,8 +31,7 @@ class FavoritesViewModel(application: Application) : AndroidViewModel(applicatio
 
     fun loadFavorites() {
         viewModelScope.launch {
-            val favoritesIdsList = getFavorites().joinToString(",")
-            val favoritesList = repository.getRecipesByIds(favoritesIdsList)
+            val favoritesList = repository.getFavoriteRecipesFromCache()
 
             _favoritesState.value = favoritesState.value?.copy(
                 favoritesList = favoritesList
@@ -41,12 +40,31 @@ class FavoritesViewModel(application: Application) : AndroidViewModel(applicatio
         }
     }
 
-    private fun getFavorites(): MutableSet<String> {
-        val sharedPrefs = getApplication<Application>().getSharedPreferences(
-            FAVORITES_PREFS,
-            Context.MODE_PRIVATE
-        )
-        val storedSet = sharedPrefs.getStringSet(FAVORITES_KEY, emptySet()) ?: emptySet()
-        return HashSet(storedSet)
+    fun onRecipeClicked(recipeId: Int) {
+        viewModelScope.launch {
+            val recipes = _favoritesState.value?.favoritesList
+            val selectedRecipe = recipes?.find { it.id == recipeId }
+
+            if (selectedRecipe != null) {
+                _favoritesState.value = favoritesState.value?.copy(
+                    selectedRecipe = selectedRecipe,
+                    openRecipe = true
+                )
+            } else {
+                Toast.makeText(
+                    getApplication(),
+                    "Не удалось загрузить выбранный рецепт",
+                    Toast.LENGTH_SHORT
+                ).show()
+            }
+        }
     }
+
+    fun onRecipeOpened() {
+        _favoritesState.value = favoritesState.value?.copy(
+            openRecipe = false,
+            selectedRecipe = null
+        )
+    }
+
 }

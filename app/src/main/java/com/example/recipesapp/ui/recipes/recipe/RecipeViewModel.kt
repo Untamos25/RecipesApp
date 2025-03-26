@@ -1,15 +1,11 @@
 package com.example.recipesapp.ui.recipes.recipe
 
 import android.app.Application
-import android.content.Context
 import android.util.Log
-import android.widget.Toast
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.example.recipesapp.DataConstants.FAVORITES_KEY
-import com.example.recipesapp.DataConstants.FAVORITES_PREFS
 import com.example.recipesapp.ModelConstants.MIN_AMOUNT_OF_PORTIONS
 import com.example.recipesapp.data.RecipesRepository
 import com.example.recipesapp.model.Recipe
@@ -33,81 +29,38 @@ class RecipeViewModel(application: Application) : AndroidViewModel(application) 
         Log.i("!!! RecipeViewModel", "RecipeViewModel инициализирована")
     }
 
-    fun loadRecipe(recipeId: Int) {
-        viewModelScope.launch {
-            val cachedRecipe = repository.getRecipeByIdFromCache(recipeId)
-
-            if (cachedRecipe != null) {
-                _recipeState.value = recipeState.value?.copy(
-                    recipe = cachedRecipe
-                ) ?: RecipeState(recipe = cachedRecipe)
-                Log.i("!!! RecipeViewModel", "Рецепт загружен из кэша")
-            }
-
-            Log.i("!!! RecipeViewModel", "Загружаю рецепт из сети")
-            val backendRecipe = repository.getRecipeById(recipeId)
-
-            backendRecipe?.let {
-                if (cachedRecipe != backendRecipe) {
-                    _recipeState.value = recipeState.value?.copy(
-                        recipe = backendRecipe
-                    ) ?: RecipeState(recipe = backendRecipe)
-
-                    Log.i("!!! RecipeViewModel", "Рецепт загружен из сети")
-                } else {
-                    Log.i(
-                        "!!! RecipeViewModel",
-                        "Сетевые данные совпадают с кэшем: UI не обновляется"
-                    )
-                }
-            }
-
-            if (backendRecipe == null && cachedRecipe == null) {
-                Toast.makeText(
-                    getApplication(),
-                    "Не удалось загрузить рецепт",
-                    Toast.LENGTH_SHORT
-                ).show()
-            }
-        }
+    fun setRecipe(recipe: Recipe) {
+        _recipeState.value =
+            recipeState.value?.copy(recipe = recipe) ?: RecipeState(recipe = recipe)
+        Log.i(
+            "!!! RecipeViewModel",
+            "Рецепт '${recipe.title}' установлен напрямую из аргументов. Избранное: ${recipe.isFavorite}"
+        )
     }
 
     fun onFavoritesClicked() {
-        val currentRecipeId = recipeState.value?.recipe?.id?.toString() ?: return
-        val favorites = getFavorites()
-        val isFavorite = favorites.contains(currentRecipeId)
+        val currentRecipe = _recipeState.value?.recipe ?: return
+        val currentRecipeId = currentRecipe.id
+        val isCurrentlyFavorite = currentRecipe.isFavorite
+        val newFavoriteState = !isCurrentlyFavorite
 
-        if (isFavorite) {
-            favorites.remove(currentRecipeId)
-        } else {
-            favorites.add(currentRecipeId)
+        viewModelScope.launch {
+            repository.updateFavoriteStatusInCache(currentRecipeId, newFavoriteState)
+
+            val updatedRecipe = currentRecipe.copy(isFavorite = newFavoriteState)
+            _recipeState.value = recipeState.value?.copy(
+                recipe = updatedRecipe
+            ) ?: RecipeState(recipe = updatedRecipe)
+
+            Log.i(
+                "!!! RecipeViewModel",
+                "Статус избранного для ${currentRecipe.title} изменён на $newFavoriteState"
+            )
         }
-
-        _recipeState.value = recipeState.value?.copy(isFavorite = !isFavorite)
-        saveFavorites(favorites)
     }
 
     fun updateNumberOfPortions(portions: Int) {
         _recipeState.value = recipeState.value?.copy(numberOfPortions = portions)
     }
 
-    private fun getFavorites(): MutableSet<String> {
-        val sharedPrefs = getApplication<Application>().getSharedPreferences(
-            FAVORITES_PREFS,
-            Context.MODE_PRIVATE
-        )
-        val storedSet = sharedPrefs.getStringSet(FAVORITES_KEY, emptySet()) ?: emptySet()
-        return HashSet(storedSet)
-    }
-
-    private fun saveFavorites(favorites: Set<String>) {
-        val sharedPrefs = getApplication<Application>().getSharedPreferences(
-            FAVORITES_PREFS,
-            Context.MODE_PRIVATE
-        )
-        with(sharedPrefs.edit()) {
-            putStringSet(FAVORITES_KEY, favorites)
-            apply()
-        }
-    }
 }

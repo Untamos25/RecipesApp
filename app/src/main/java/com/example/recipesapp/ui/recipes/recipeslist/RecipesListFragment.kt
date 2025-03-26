@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.example.recipesapp.R
 import com.example.recipesapp.databinding.FragmentListRecipesBinding
+import com.example.recipesapp.model.Recipe
 import com.example.recipesapp.model.getFullImageUrl
 import java.lang.IllegalStateException
 
@@ -45,8 +46,12 @@ class RecipesListFragment : Fragment() {
         viewModel.loadRecipesList(categoryId)
         viewModel.recipesListState.observe(viewLifecycleOwner) { state ->
             initUI(state)
-        }
 
+            if (state.openRecipe && state.selectedRecipe != null) {
+                openRecipe(state.selectedRecipe)
+                viewModel.onRecipeOpened()
+            }
+        }
     }
 
     override fun onDestroyView() {
@@ -64,7 +69,7 @@ class RecipesListFragment : Fragment() {
         recipesListAdapter.setOnItemClickListener(
             object : RecipesListAdapter.OnItemClickListener {
                 override fun onItemClick(recipeId: Int) {
-                    openRecipeByRecipeId(recipeId)
+                    viewModel.onRecipeClicked(recipeId)
                 }
             })
     }
@@ -90,10 +95,10 @@ class RecipesListFragment : Fragment() {
         }
     }
 
-    private fun openRecipeByRecipeId(recipeId: Int) {
+    private fun openRecipe(recipe: Recipe) {
         findNavController().navigate(
             RecipesListFragmentDirections.actionRecipesListFragmentToRecipeFragment(
-                recipeId
+                recipe
             )
         )
     }

@@ -17,6 +17,8 @@ class RecipesListViewModel(application: Application) : AndroidViewModel(applicat
     data class RecipesListState(
         val category: Category? = null,
         val recipesList: List<Recipe>? = null,
+        val selectedRecipe: Recipe? = null,
+        val openRecipe: Boolean = false
     )
 
     private val _recipesListState = MutableLiveData<RecipesListState>()
@@ -52,21 +54,25 @@ class RecipesListViewModel(application: Application) : AndroidViewModel(applicat
 
             backendRecipes?.let {
                 if (cachedRecipes != backendRecipes) {
+                    repository.insertRecipesForCategoryInDatabase(categoryId, backendRecipes)
+                    Log.i("!!! RecipesListViewModel", "Рецепты записаны в БД")
+                    val updatedRecipes = repository.getRecipesForCategoryFromCache(categoryId)
+                    Log.i(
+                        "!!! RecipesListViewModel",
+                        "Список рецептов категории ${backendCategory?.title} загружен из сети и принял статусы избранного из БД"
+                    )
+
                     _recipesListState.value = recipesListState.value?.copy(
                         category = backendCategory,
-                        recipesList = backendRecipes,
+                        recipesList = updatedRecipes,
                     ) ?: RecipesListState(
                         category = backendCategory,
-                        recipesList = backendRecipes,
+                        recipesList = updatedRecipes,
                     )
                     Log.i(
                         "!!! RecipesListViewModel",
-                        "Список рецептов категории ${backendCategory?.title} загружен из сети"
+                        "UI со списком рецептов обновлён"
                     )
-
-                    repository.insertRecipesForCategoryInDatabase(categoryId, backendRecipes)
-                    Log.i("!!! RecipesListViewModel", "Рецепты записаны в БД")
-
                 } else {
                     Log.i(
                         "!!! RecipesListViewModel",
@@ -84,4 +90,41 @@ class RecipesListViewModel(application: Application) : AndroidViewModel(applicat
             }
         }
     }
+
+    fun onRecipeClicked(recipeId: Int) {
+        viewModelScope.launch {
+            val recipes = _recipesListState.value?.recipesList
+            val selectedRecipe = recipes?.find { it.id == recipeId }
+
+            if (selectedRecipe != null) {
+                _recipesListState.value = recipesListState.value?.copy(
+                    selectedRecipe = selectedRecipe,
+                    openRecipe = true
+                )
+            } else {
+                val backendRecipe = repository.getRecipeById(recipeId)
+
+                if (backendRecipe != null) {
+                    _recipesListState.value = recipesListState.value?.copy(
+                        selectedRecipe = backendRecipe,
+                        openRecipe = true
+                    )
+                } else {
+                    Toast.makeText(
+                        getApplication(),
+                        "Не удалось загрузить выбранный рецепт",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+        }
+    }
+
+    fun onRecipeOpened() {
+        _recipesListState.value = recipesListState.value?.copy(
+            openRecipe = false,
+            selectedRecipe = null
+        )
+    }
+
 }

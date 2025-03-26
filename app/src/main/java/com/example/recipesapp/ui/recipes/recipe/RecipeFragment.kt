@@ -1,6 +1,7 @@
 package com.example.recipesapp.ui.recipes.recipe
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -44,15 +45,21 @@ class RecipeFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val recipeId = recipeFragmentArgs.recipeId
+        val recipe = recipeFragmentArgs.recipe
+        Log.d("!!! RecipeFragment", "Получен рецепт из аргументов: ${recipe.title}")
+
+        viewModel.setRecipe(recipe)
 
         divider = createDivider()
         setupSeekBar()
         initRecycler()
 
-        viewModel.loadRecipe(recipeId)
         viewModel.recipeState.observe(viewLifecycleOwner) { state ->
-            initUI(state)
+            if (state.recipe != null) {
+                initUI(state)
+            } else {
+                Log.e("!!! RecipeFragment", "Состояние рецепта null, UI не обновлен.")
+            }
         }
     }
 
@@ -75,7 +82,7 @@ class RecipeFragment : Fragment() {
 
     private fun initUI(state: RecipeViewModel.RecipeState) {
         val recipe = state.recipe
-        val isFavorite = state.isFavorite
+        val isFavorite = recipe?.isFavorite
         val portionsCount = state.numberOfPortions
 
         updateFavoriteIcon(isFavorite)
@@ -103,9 +110,11 @@ class RecipeFragment : Fragment() {
         }
     }
 
-    private fun updateFavoriteIcon(isFavorite: Boolean) {
-        binding.ibFavorites.apply {
-            setImageResource(if (isFavorite) R.drawable.ic_heart else R.drawable.ic_heart_empty)
+    private fun updateFavoriteIcon(isFavorite: Boolean?) {
+        isFavorite?.let {
+            binding.ibFavorites.apply {
+                setImageResource(if (isFavorite) R.drawable.ic_heart else R.drawable.ic_heart_empty)
+            }
         }
     }
 
