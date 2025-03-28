@@ -49,6 +49,9 @@ class RecipesRepository(
     val categoriesDao = database.categoriesDao()
     val recipesDao = database.recipesDao()
 
+
+    // Методы для работы с БД
+
     suspend fun getCategoriesFromCache() = withContext(dispatcher) {
         try {
             categoriesDao.getAllCategories()
@@ -69,39 +72,62 @@ class RecipesRepository(
     }
 
 
-    suspend fun getRecipesForCategoryFromCache(categoryId: Int): List<Recipe>? = withContext(dispatcher) {
-        try {
-            recipesDao.getRecipesForCategory(categoryId)
-        } catch (e: Exception){
-            Log.e("!!! RecipesRepository", "Ошибка при получении рецептов из кэша для категории $categoryId", e)
-            null
-        }
-    }
-
-
-    suspend fun insertRecipesForCategoryInDatabase(categoryId: Int, recipes: List<Recipe>) = withContext(dispatcher){
-        try {
-            recipesDao.insertRecipes(recipes)
-            val crossRefs = recipes.map { recipe ->
-                CategoryRecipeCrossRef(categoryId, recipe.id)
+    suspend fun getRecipesForCategoryFromCache(categoryId: Int): List<Recipe>? =
+        withContext(dispatcher) {
+            try {
+                recipesDao.getRecipesForCategory(categoryId)
+            } catch (e: Exception) {
+                Log.e(
+                    "!!! RecipesRepository",
+                    "Ошибка при получении рецептов из кэша для категории $categoryId",
+                    e
+                )
+                null
             }
-            recipesDao.insertCategoryRecipeCrossRef(crossRefs)
         }
-        catch (e: Exception) {
-            Log.e("!!! RecipesRepository", "Ошибка при записи рецептов в БД.", e)
-        }
-    }
 
 
-    suspend fun getRecipeByIdFromCache(recipeId: Int): Recipe? = withContext(dispatcher) {
+    suspend fun insertRecipesForCategoryInDatabase(categoryId: Int, recipes: List<Recipe>) =
+        withContext(dispatcher) {
+            try {
+                val favoriteRecipes = recipesDao.getFavoriteRecipes()
+                val favoriteRecipeIds = favoriteRecipes.map { it.id }.toSet()
+                val recipesWithFavorites = recipes.map { recipe ->
+                    recipe.copy(isFavorite = favoriteRecipeIds.contains(recipe.id))
+                }
+
+                recipesDao.insertRecipes(recipesWithFavorites)
+
+                val crossRefs = recipes.map { recipe ->
+                    CategoryRecipeCrossRef(categoryId, recipe.id)
+                }
+                recipesDao.insertCategoryRecipeCrossRef(crossRefs)
+            } catch (e: Exception) {
+                Log.e("!!! RecipesRepository", "Ошибка при записи рецептов в БД.", e)
+            }
+        }
+
+
+    suspend fun getFavoriteRecipesFromCache(): List<Recipe>? = withContext(dispatcher) {
         try {
-            recipesDao.getRecipeById(recipeId)
-        } catch (e: Exception){
-            Log.e("!!! RecipesRepository", "Ошибка при получении рецепта с id $recipeId", e)
+            recipesDao.getFavoriteRecipes()
+        } catch (e: Exception) {
+            Log.e("!!! RecipesRepository", "Ошибка при получении избранных рецептов из кэша", e)
             null
         }
     }
 
+    suspend fun updateFavoriteStatusInCache(recipeId: Int, isFavorite: Boolean) = withContext(dispatcher) {
+        try {
+            recipesDao.updateFavoriteStatus(recipeId, isFavorite)
+            Log.i("!!! RecipesRepository", "Статус избранного для $recipeId обновлен на $isFavorite в БД")
+        } catch (e: Exception) {
+            Log.e("!!! RecipesRepository", "Ошибка при обновлении статуса избранного для $recipeId в БД", e)
+        }
+    }
+
+
+    // Методы для работы с API
 
     suspend fun getCategories(): List<Category>? = withContext(dispatcher) {
         try {
@@ -112,7 +138,6 @@ class RecipesRepository(
         }
     }
 
-
     suspend fun getCategoryById(categoryId: Int): Category? = withContext(dispatcher) {
         try {
             recipeApiService.getCategoryById(categoryId)
@@ -121,7 +146,6 @@ class RecipesRepository(
             null
         }
     }
-
 
     suspend fun getRecipesByCategoryId(categoryId: Int): List<Recipe>? = withContext(dispatcher) {
         try {
@@ -136,22 +160,11 @@ class RecipesRepository(
         }
     }
 
-
     suspend fun getRecipeById(recipeId: Int): Recipe? = withContext(dispatcher) {
         try {
             recipeApiService.getRecipeById(recipeId)
         } catch (e: Exception) {
             Log.e("!!! RecipesRepository", "Ошибка при получении рецепта по его id", e)
-            null
-        }
-    }
-
-
-    suspend fun getRecipesByIds(setIds: String): List<Recipe>? = withContext(dispatcher) {
-        try {
-            recipeApiService.getRecipesByIds(setIds)
-        } catch (e: Exception) {
-            Log.e("!!! RecipesRepository", "Ошибка при получении списка рецептов по их id", e)
             null
         }
     }

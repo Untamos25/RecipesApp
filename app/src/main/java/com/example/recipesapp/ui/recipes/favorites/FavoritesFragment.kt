@@ -8,6 +8,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.example.recipesapp.databinding.FragmentFavoritesBinding
+import com.example.recipesapp.model.Recipe
 import com.example.recipesapp.ui.recipes.recipeslist.RecipesListAdapter
 
 class FavoritesFragment : Fragment() {
@@ -37,6 +38,11 @@ class FavoritesFragment : Fragment() {
         viewModel.loadFavorites()
         viewModel.favoritesState.observe(viewLifecycleOwner) { state ->
             initUI(state)
+
+            if (state.openRecipe && state.selectedRecipe != null) {
+                openRecipe(state.selectedRecipe)
+                viewModel.onRecipeOpened()
+            }
         }
     }
 
@@ -49,13 +55,12 @@ class FavoritesFragment : Fragment() {
     private fun initRecycler() {
         binding.rvFavorites.adapter = favoritesAdapter
 
-        favoritesAdapter.setOnItemClickListener(object :
-            RecipesListAdapter.OnItemClickListener {
-
-            override fun onItemClick(recipeId: Int) {
-                openRecipeByRecipeId(recipeId)
-            }
-        })
+        favoritesAdapter.setOnItemClickListener(
+            object : RecipesListAdapter.OnItemClickListener {
+                override fun onItemClick(recipeId: Int) {
+                    viewModel.onRecipeClicked(recipeId)
+                }
+            })
     }
 
     private fun initUI(state: FavoritesViewModel.FavoritesState) {
@@ -70,10 +75,10 @@ class FavoritesFragment : Fragment() {
         }
     }
 
-    private fun openRecipeByRecipeId(recipeId: Int) {
+    private fun openRecipe(recipe: Recipe) {
         findNavController().navigate(
             FavoritesFragmentDirections.actionFavoritesFragmentToRecipeFragment(
-                recipeId
+                recipe
             )
         )
     }

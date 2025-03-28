@@ -56,8 +56,8 @@
         android:label="RecipeFragment"
         tools:layout="@layout/fragment_recipe" >
         <argument
-            android:name="recipeId"
-            app:argType="integer" />
+            android:name="recipe"
+            app:argType="com.example.recipesapp.model.Recipe" />
     </fragment>
 
     <action
