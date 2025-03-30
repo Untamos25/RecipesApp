@@ -1,18 +1,17 @@
 package com.example.recipesapp.ui.recipes.recipe
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.SeekBar
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.example.recipesapp.R
+import com.example.recipesapp.RecipesApplication
 import com.example.recipesapp.databinding.FragmentRecipeBinding
 import com.example.recipesapp.model.getFullImageUrl
 import com.google.android.material.divider.MaterialDividerItemDecoration
@@ -25,13 +24,19 @@ class RecipeFragment : Fragment() {
         get() = _binding
             ?: throw IllegalStateException("Binding для FragmentRecipeBinding не должен быть null")
 
-    private val viewModel: RecipeViewModel by viewModels()
+    private lateinit var viewModel: RecipeViewModel
     private val recipeFragmentArgs: RecipeFragmentArgs by navArgs()
     private val ingredientsAdapter = IngredientsAdapter(mutableListOf())
     private val methodAdapter = MethodAdapter(mutableListOf())
 
     private lateinit var divider: MaterialDividerItemDecoration
 
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
+        val appContainer = (requireActivity().application as RecipesApplication).appContainer
+        viewModel = appContainer.recipeViewModelFactory.create()
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -46,8 +51,6 @@ class RecipeFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         val recipe = recipeFragmentArgs.recipe
-        Log.d("!!! RecipeFragment", "Получен рецепт из аргументов: ${recipe.title}")
-
         viewModel.setRecipe(recipe)
 
         divider = createDivider()
@@ -57,8 +60,6 @@ class RecipeFragment : Fragment() {
         viewModel.recipeState.observe(viewLifecycleOwner) { state ->
             if (state.recipe != null) {
                 initUI(state)
-            } else {
-                Log.e("!!! RecipeFragment", "Состояние рецепта null, UI не обновлен.")
             }
         }
     }
@@ -106,6 +107,8 @@ class RecipeFragment : Fragment() {
                     .placeholder(R.drawable.img_placeholder)
                     .error(R.drawable.img_error)
                     .into(imgRecipe)
+
+                imgRecipe.contentDescription = getString(R.string.recipe_image, it.title)
             }
         }
     }

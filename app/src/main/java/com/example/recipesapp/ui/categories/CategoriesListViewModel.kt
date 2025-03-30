@@ -1,33 +1,28 @@
 package com.example.recipesapp.ui.categories
 
-import android.app.Application
-import android.util.Log
-import android.widget.Toast
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.recipesapp.data.RecipesRepository
 import com.example.recipesapp.model.Category
 import kotlinx.coroutines.launch
 
-class CategoriesListViewModel(application: Application) : AndroidViewModel(application) {
+class CategoriesListViewModel(
+    private val repository: RecipesRepository,
+) : ViewModel() {
 
     data class CategoriesListState(
         val categoriesList: List<Category>? = null,
         val selectedCategory: Category? = null,
-        val openRecipeList: Boolean = false
+        val openRecipeList: Boolean = false,
+        val toastMessage: String? = null,
     )
 
     private val _categoriesListState = MutableLiveData<CategoriesListState>()
     val categoriesListState: LiveData<CategoriesListState>
         get() = _categoriesListState
 
-    private val repository = RecipesRepository(application)
-
-    init {
-        Log.i("!!! CategoriesListViewModel", "CategoriesViewModel инициализирована")
-    }
 
     fun loadCategories() {
         viewModelScope.launch {
@@ -37,13 +32,8 @@ class CategoriesListViewModel(application: Application) : AndroidViewModel(appli
                 _categoriesListState.value = categoriesListState.value?.copy(
                     categoriesList = cachedCategories
                 ) ?: CategoriesListState(categoriesList = cachedCategories)
-                Log.i(
-                    "!!! CategoriesListViewModel",
-                    "Список категорий из ${cachedCategories.size} элементов загружен из кэша"
-                )
             }
 
-            Log.i("!!! CategoriesListViewModel", "Загружаю категории из сети")
             val backendCategories = repository.getCategories()
 
             backendCategories?.let {
@@ -51,28 +41,16 @@ class CategoriesListViewModel(application: Application) : AndroidViewModel(appli
                     _categoriesListState.value = categoriesListState.value?.copy(
                         categoriesList = backendCategories
                     ) ?: CategoriesListState(categoriesList = backendCategories)
-                    Log.i(
-                        "!!! CategoriesListViewModel",
-                        "Список категорий из ${backendCategories.size} элементов загружен из сети"
-                    )
 
                     repository.insertCategoriesInDatabase(backendCategories)
-                    Log.i("!!! CategoriesListViewModel", "Категории записаны в БД")
-
-                } else {
-                    Log.i(
-                        "!!! CategoriesListViewModel",
-                        "Сетевые данные совпадают с кэшем: UI не обновляется, категории в БД не заменяются"
-                    )
                 }
             }
 
             if (backendCategories.isNullOrEmpty() && cachedCategories.isNullOrEmpty()) {
-                Toast.makeText(
-                    getApplication(),
-                    "Не удалось загрузить категории",
-                    Toast.LENGTH_SHORT
-                ).show()
+                _categoriesListState.value = categoriesListState.value?.copy(
+                    categoriesList = null
+                ) ?: CategoriesListState(categoriesList = null)
+                showToast("Не удалось загрузить категории")
             }
         }
     }
@@ -96,11 +74,7 @@ class CategoriesListViewModel(application: Application) : AndroidViewModel(appli
                         openRecipeList = true
                     )
                 } else {
-                    Toast.makeText(
-                        getApplication(),
-                        "Не удалось загрузить рецепты для выбранной категории",
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    showToast("Не удалось загрузить рецепты для выбранной категории")
                 }
             }
         }
@@ -110,6 +84,15 @@ class CategoriesListViewModel(application: Application) : AndroidViewModel(appli
         _categoriesListState.value = categoriesListState.value?.copy(
             openRecipeList = false,
             selectedCategory = null
+        )
+    }
+
+    private fun showToast(message: String) {
+        _categoriesListState.value = categoriesListState.value?.copy(
+            toastMessage = message
+        )
+        _categoriesListState.value = categoriesListState.value?.copy(
+            toastMessage = null
         )
     }
 

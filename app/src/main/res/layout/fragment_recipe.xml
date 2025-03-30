@@ -19,6 +19,7 @@
                 android:id="@+id/imgRecipe"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
+                android:contentDescription="@string/recipe_image"
                 android:scaleType="centerCrop"
                 tools:src="@drawable/bcg_categories" />
 
@@ -29,6 +30,7 @@
                 android:layout_marginTop="@dimen/space_main"
                 android:layout_marginEnd="@dimen/space_main"
                 android:background="@drawable/ripple_effect"
+                android:contentDescription="@string/favorites_heart_button"
                 android:scaleType="fitCenter"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
@@ -42,9 +44,12 @@
                 android:layout_marginHorizontal="@dimen/space_main"
                 android:layout_marginBottom="@dimen/space_main"
                 android:textAppearance="@style/StyleTitle20"
+                app:layout_constrainedWidth="true"
                 app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/ibFavorites"
+                app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
-                tools:text="Название рецепта" />
+                tools:text="Очень длинное название рецепта" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

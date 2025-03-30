@@ -1,33 +1,27 @@
 package com.example.recipesapp.ui.recipes.favorites
 
-import android.app.Application
-import android.util.Log
-import android.widget.Toast
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.recipesapp.data.RecipesRepository
 import com.example.recipesapp.model.Recipe
 import kotlinx.coroutines.launch
 
-class FavoritesViewModel(application: Application) : AndroidViewModel(application) {
+class FavoritesViewModel(
+    private val repository: RecipesRepository,
+) : ViewModel() {
 
     data class FavoritesState(
         val favoritesList: List<Recipe>? = null,
         val selectedRecipe: Recipe? = null,
-        val openRecipe: Boolean = false
+        val openRecipe: Boolean = false,
+        val toastMessage: String? = null,
     )
 
     private val _favoritesState = MutableLiveData<FavoritesState>()
     val favoritesState: LiveData<FavoritesState>
         get() = _favoritesState
-
-    private val repository = RecipesRepository(application)
-
-    init {
-        Log.i("!!!", "FavoritesViewModel инициализирована")
-    }
 
     fun loadFavorites() {
         viewModelScope.launch {
@@ -36,7 +30,6 @@ class FavoritesViewModel(application: Application) : AndroidViewModel(applicatio
             _favoritesState.value = favoritesState.value?.copy(
                 favoritesList = favoritesList
             ) ?: FavoritesState(favoritesList = favoritesList)
-            Log.i("!!!", "Список избранного из ${favoritesList?.size} элементов загружен")
         }
     }
 
@@ -51,11 +44,7 @@ class FavoritesViewModel(application: Application) : AndroidViewModel(applicatio
                     openRecipe = true
                 )
             } else {
-                Toast.makeText(
-                    getApplication(),
-                    "Не удалось загрузить выбранный рецепт",
-                    Toast.LENGTH_SHORT
-                ).show()
+                showToast("Не удалось загрузить выбранный рецепт")
             }
         }
     }
@@ -64,6 +53,15 @@ class FavoritesViewModel(application: Application) : AndroidViewModel(applicatio
         _favoritesState.value = favoritesState.value?.copy(
             openRecipe = false,
             selectedRecipe = null
+        )
+    }
+
+    private fun showToast(message: String) {
+        _favoritesState.value = favoritesState.value?.copy(
+            toastMessage = message
+        )
+        _favoritesState.value = favoritesState.value?.copy(
+            toastMessage = null
         )
     }
 

@@ -1,10 +1,14 @@
 <resources>
     <string name="app_name" translatable="false">RecipesApp</string>
     <string name="categories">категории</string>
-    <string name="favourites">избранное</string>
-    <string name="category_image">Изображение категории %1$s</string>
+    <string name="favorites">избранное</string>
+    <string name="category_image">категория %1$s</string>
+    <string name="recipe_image">рецепт %1$s</string>
+    <string name="favorites_heart_button">добавить/удалить из избранного</string>
     <string name="title_ingredients">Ингредиенты</string>
     <string name="title_cooking_method">Способ приготовления</string>
     <string name="title_portions">Порции:</string>
     <string name="empty_favorites_description">Вы еще не добавили ни одного рецепта в избранное</string>
+    <string name="method_step_format">%1$d. %2$s</string>
+
 </resources>
