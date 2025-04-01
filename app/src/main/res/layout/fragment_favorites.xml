@@ -15,7 +15,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:scaleType="centerCrop"
-            android:src="@drawable/bcg_favorites" />
+            android:src="@drawable/bcg_favorites"
+            android:contentDescription="@string/favorites"/>
 
         <TextView
             style="@style/StyleHeader"
@@ -23,7 +24,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="@dimen/space_main"
             android:layout_marginBottom="@dimen/space_main"
-            android:text="@string/favourites"
+            android:text="@string/favorites"
             android:textAppearance="@style/StyleTitle20"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent" />

@@ -1,17 +1,17 @@
 package com.example.recipesapp.ui.recipes.recipe
 
-import android.app.Application
-import android.util.Log
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.recipesapp.ModelConstants.MIN_AMOUNT_OF_PORTIONS
 import com.example.recipesapp.data.RecipesRepository
 import com.example.recipesapp.model.Recipe
 import kotlinx.coroutines.launch
 
-class RecipeViewModel(application: Application) : AndroidViewModel(application) {
+class RecipeViewModel(
+    private val repository: RecipesRepository,
+) : ViewModel() {
 
     data class RecipeState(
         val recipe: Recipe? = null,
@@ -23,19 +23,9 @@ class RecipeViewModel(application: Application) : AndroidViewModel(application) 
     val recipeState: LiveData<RecipeState>
         get() = _recipeState
 
-    private val repository = RecipesRepository(application)
-
-    init {
-        Log.i("!!! RecipeViewModel", "RecipeViewModel инициализирована")
-    }
-
     fun setRecipe(recipe: Recipe) {
         _recipeState.value =
             recipeState.value?.copy(recipe = recipe) ?: RecipeState(recipe = recipe)
-        Log.i(
-            "!!! RecipeViewModel",
-            "Рецепт '${recipe.title}' установлен напрямую из аргументов. Избранное: ${recipe.isFavorite}"
-        )
     }
 
     fun onFavoritesClicked() {
@@ -51,11 +41,6 @@ class RecipeViewModel(application: Application) : AndroidViewModel(application) 
             _recipeState.value = recipeState.value?.copy(
                 recipe = updatedRecipe
             ) ?: RecipeState(recipe = updatedRecipe)
-
-            Log.i(
-                "!!! RecipeViewModel",
-                "Статус избранного для ${currentRecipe.title} изменён на $newFavoriteState"
-            )
         }
     }
 

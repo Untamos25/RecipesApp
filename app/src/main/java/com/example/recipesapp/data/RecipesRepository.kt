@@ -1,54 +1,18 @@
 package com.example.recipesapp.data
 
-import android.app.Application
 import android.util.Log
-import androidx.room.Room
-import com.example.recipesapp.DataConstants.BASE_URL
 import com.example.recipesapp.model.Category
 import com.example.recipesapp.model.CategoryRecipeCrossRef
 import com.example.recipesapp.model.Recipe
-import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
-import kotlinx.coroutines.CoroutineDispatcher
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import kotlinx.serialization.json.Json
-import okhttp3.MediaType.Companion.toMediaType
-import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
-import retrofit2.Retrofit
+import kotlin.coroutines.CoroutineContext
 
 class RecipesRepository(
-    application: Application,
-    private val dispatcher: CoroutineDispatcher = Dispatchers.IO
+    private val recipesDao: RecipesDao,
+    private val categoriesDao: CategoriesDao,
+    private val recipeApiService: RecipeApiService,
+    private val dispatcher: CoroutineContext
 ) {
-
-    private val contentType = "application/json".toMediaType()
-
-    private val loggingInterceptor = HttpLoggingInterceptor().apply {
-        level = HttpLoggingInterceptor.Level.BODY
-    }
-
-    private val client = OkHttpClient.Builder()
-        .addInterceptor(loggingInterceptor)
-        .build()
-
-    private val retrofit = Retrofit.Builder()
-        .baseUrl(BASE_URL)
-        .client(client)
-        .addConverterFactory(Json.asConverterFactory(contentType))
-        .build()
-
-    private val recipeApiService: RecipeApiService = retrofit.create(RecipeApiService::class.java)
-
-    val database = Room.databaseBuilder(
-        application.applicationContext,
-        Database::class.java,
-        "database"
-    ).fallbackToDestructiveMigration().build()
-
-    val categoriesDao = database.categoriesDao()
-    val recipesDao = database.recipesDao()
-
 
     // Методы для работы с БД
 
@@ -120,7 +84,6 @@ class RecipesRepository(
     suspend fun updateFavoriteStatusInCache(recipeId: Int, isFavorite: Boolean) = withContext(dispatcher) {
         try {
             recipesDao.updateFavoriteStatus(recipeId, isFavorite)
-            Log.i("!!! RecipesRepository", "Статус избранного для $recipeId обновлен на $isFavorite в БД")
         } catch (e: Exception) {
             Log.e("!!! RecipesRepository", "Ошибка при обновлении статуса избранного для $recipeId в БД", e)
         }

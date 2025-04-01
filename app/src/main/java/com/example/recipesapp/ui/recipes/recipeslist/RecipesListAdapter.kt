@@ -41,10 +41,10 @@ class RecipesListAdapter(var dataSet: List<Recipe>) :
                 .load(recipe.getFullImageUrl())
                 .placeholder(R.drawable.img_placeholder)
                 .error(R.drawable.img_error)
-                .into(imageCategory)
+                .into(imageRecipe)
 
-            imageCategory.contentDescription =
-                viewHolder.itemView.context.getString(R.string.category_image, recipe.title)
+            imageRecipe.contentDescription =
+                viewHolder.itemView.context.getString(R.string.recipe_image, recipe.title)
 
             root.setOnClickListener { itemClickListener?.onItemClick(recipe.id) }
         }

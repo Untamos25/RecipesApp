@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">RecipesApp</string>
     <string name="categories">categories</string>
-    <string name="favourites">favorites</string>
+    <string name="favorites">favorites</string>
     <string name="category_image">"Image of category %1$s"</string>
+    <string name="favorites_heart_button">Add/remove from favorites</string>
     <string name="title_ingredients">Ingredients</string>
     <string name="title_cooking_method">Cooking method</string>
     <string name="title_portions">Portions:</string>
     <string name="empty_favorites_description">You haven\'t added any recipes to your favorites yet</string>
+    <string name="method_step_format">%1$d. %2$s</string>
+    <string name="recipe_image">recipe %1$s</string>
 </resources>

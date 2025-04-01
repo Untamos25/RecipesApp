@@ -3,6 +3,7 @@ package com.example.recipesapp.ui.recipes.recipe
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.example.recipesapp.R
 import com.example.recipesapp.databinding.ItemMethodBinding
 
 class MethodAdapter(var dataSet: MutableList<String>) :
@@ -20,7 +21,7 @@ class MethodAdapter(var dataSet: MutableList<String>) :
         val method = dataSet[position]
         val stepNumber = position + 1
         with(viewHolder.binding) {
-            tvmMethodStep.text = "$stepNumber. $method"
+            tvmMethodStep.text = root.context.getString(R.string.method_step_format, stepNumber, method)
         }
     }
 
