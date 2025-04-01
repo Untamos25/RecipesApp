@@ -4,15 +4,19 @@ import android.util.Log
 import com.example.recipesapp.model.Category
 import com.example.recipesapp.model.CategoryRecipeCrossRef
 import com.example.recipesapp.model.Recipe
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 import kotlin.coroutines.CoroutineContext
 
-class RecipesRepository(
+
+class RecipesRepository @Inject constructor(
     private val recipesDao: RecipesDao,
     private val categoriesDao: CategoriesDao,
     private val recipeApiService: RecipeApiService,
-    private val dispatcher: CoroutineContext
 ) {
+
+    private val dispatcher: CoroutineContext = Dispatchers.IO
 
     // Методы для работы с БД
 
