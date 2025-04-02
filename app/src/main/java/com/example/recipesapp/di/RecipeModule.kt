@@ -18,12 +18,14 @@ import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
+import javax.inject.Singleton
 
 @Module
 @InstallIn(SingletonComponent::class)
 class RecipeModule {
 
     @Provides
+    @Singleton
     fun provideDataBase(@ApplicationContext context: Context): Database = Room.databaseBuilder(
         context,
         Database::class.java,
@@ -31,12 +33,15 @@ class RecipeModule {
     ).fallbackToDestructiveMigration().build()
 
     @Provides
+    @Singleton
     fun provideCategoriesDao(database: Database): CategoriesDao = database.categoriesDao()
 
     @Provides
+    @Singleton
     fun provideRecipesDao(database: Database): RecipesDao = database.recipesDao()
 
     @Provides
+    @Singleton
     fun provideHttpClient(): OkHttpClient {
         val loggingInterceptor = HttpLoggingInterceptor()
         loggingInterceptor.setLevel(HttpLoggingInterceptor.Level.BODY)
@@ -46,6 +51,7 @@ class RecipeModule {
     }
 
     @Provides
+    @Singleton
     fun provideRetrofit(okHttpClient: OkHttpClient): Retrofit {
         val contentType = "application/json".toMediaType()
         val retrofit = Retrofit.Builder()
@@ -57,6 +63,7 @@ class RecipeModule {
     }
 
     @Provides
+    @Singleton
     fun provideRecipeApiService(retrofit: Retrofit): RecipeApiService {
         return retrofit.create(RecipeApiService::class.java)
     }
