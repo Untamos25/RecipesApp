@@ -6,17 +6,19 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.example.recipesapp.R
-import com.example.recipesapp.RecipesApplication
 import com.example.recipesapp.databinding.FragmentListRecipesBinding
 import com.example.recipesapp.model.Recipe
 import com.example.recipesapp.model.getFullImageUrl
+import dagger.hilt.android.AndroidEntryPoint
 import java.lang.IllegalStateException
 
+@AndroidEntryPoint
 class RecipesListFragment : Fragment() {
 
     private var _binding: FragmentListRecipesBinding? = null
@@ -24,16 +26,9 @@ class RecipesListFragment : Fragment() {
         get() = _binding
             ?: throw IllegalStateException("Binding для FragmentListRecipesBinding не должен быть null")
 
-    private lateinit var viewModel: RecipesListViewModel
+    private val viewModel: RecipesListViewModel by viewModels()
     private val recipesListFragmentArgs: RecipesListFragmentArgs by navArgs()
     private val recipesListAdapter = RecipesListAdapter(listOf())
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-        val appContainer = (requireActivity().application as RecipesApplication).appContainer
-        viewModel = appContainer.recipesListViewModelFactory.create()
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -100,7 +95,8 @@ class RecipesListFragment : Fragment() {
                     .error(R.drawable.img_error)
                     .into(imgCategory)
 
-                imgCategory.contentDescription = getString(R.string.category_image, state.category.title)
+                imgCategory.contentDescription =
+                    getString(R.string.category_image, state.category.title)
             }
 
             recipesList?.let {
