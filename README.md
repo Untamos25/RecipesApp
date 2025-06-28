@@ -36,7 +36,7 @@
     *   Kotlinx.Serialization
     *   Glide
 
-### 3. Примеры использования
+### 3. Пример использования
 
 1.  **Главный экран:** Открыв приложение, вы увидите список категорий блюд.
 2.  **Список рецептов:** Нажмите на любую категорию, чтобы перейти к списку рецептов, относящихся к ней.
@@ -70,7 +70,7 @@ This is an Android application for browsing culinary recipes.
 
 The application is designed using a **Single-Activity** approach with the **Jetpack Navigation Component** for handling navigation between screens.
 
-### 2. Technologies Used
+### 2. Technologies
 
 *   **Architecture & Structure:**
     *   MVVM
@@ -91,7 +91,7 @@ The application is designed using a **Single-Activity** approach with the **Jetp
     *   Kotlinx.Serialization
     *   Glide
 
-### 3. Usage Examples
+### 3. Usage Example
 
 1.  **Main Screen:** Upon launching the app, you will see a list of recipe categories.
 2.  **Recipe List:** Tap on any category to navigate to a list of recipes within it.
